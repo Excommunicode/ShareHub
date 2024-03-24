@@ -24,18 +24,18 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDTO addUser(UserDTO userDTO) {
-        if (!repository.existsByEmail(userDTO.getEmail())) {
-            UserDTO userDTO1 = mapper.toDTO(repository.saveAndFlush(mapper.toModel(userDTO)));
-            return mapper.toDTO(repository.findById(userDTO1.getId()).orElse(null));
-        }
-        throw new ValidateException("у пользователя есть почта", HttpStatus.CONFLICT);
+        isExistUserByEmail(userDTO);
+        UserDTO userDTO1 = mapper.toDTO(repository.saveAndFlush(mapper.toModel(userDTO)));
+        return mapper.toDTO(repository.findById(userDTO1.getId()).orElse(null));
+
+
     }
 
     @Transactional
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new NotFoundExeception("The user was not found"));
+                .orElseThrow(() -> new NotFoundExeception(String.format("The user was not found %s", userDTO.getId())));
         if (userDTO.getName() != null) {
             user.setName(userDTO.getName());
         }
@@ -65,5 +65,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isExistUser(Long id) {
         return repository.existsById(id);
+    }
+
+    private void isExistUserByEmail(UserDTO userDTO) {
+        if (repository.existsByEmail(userDTO.getEmail())) {
+            throw new ValidateException("у пользователя есть почта", HttpStatus.CONFLICT);
+        }
+
     }
 }
