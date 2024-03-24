@@ -4,9 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-
-import static ru.practicum.shareit.constant.UserConstant.REGEX_EMAIL;
 
 
 @Getter
@@ -25,7 +22,6 @@ public class User {
     Long id;
     @Column(nullable = false, name = "name")
     String name;
-    @Email(regexp = REGEX_EMAIL, message = "не коректный адрес пользователя")
     @Column(nullable = false, name = "email", unique = true)
     String email;
 }

@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public class ValidateException extends RuntimeException {
-    HttpStatus httpStatus;
+   private final HttpStatus httpStatus;
 
     /**
      * Constructs a new runtime exception with the specified detail message.

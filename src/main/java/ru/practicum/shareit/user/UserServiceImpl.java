@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.NotFoundExeception;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidateException;
 
 import java.util.List;
@@ -27,13 +27,11 @@ public class UserServiceImpl implements UserService {
         isExistUserByEmail(userDTO);
         UserDTO userDTO1 = mapper.toDTO(repository.saveAndFlush(mapper.toModel(userDTO)));
         return mapper.toDTO(repository.findById(userDTO1.getId()).orElse(null));
-
-
     }
 
     @Transactional
     @Override
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
+    public UserDTO updateUser(final Long id, UserDTO userDTO) {
         User user = mapper.toModel(getById(id));
         if (userDTO.getName() != null) {
             user.setName(userDTO.getName());
@@ -46,13 +44,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getById(Long id) throws NotFoundExeception {
-        return mapper.toDTO(repository.findById(id).orElseThrow(() -> new NotFoundExeception("пользователь не был найден что делать?")));
+    public UserDTO getById(final Long id) throws NotFoundException {
+        return mapper.toDTO(repository.findById(id).orElseThrow(() -> new NotFoundException("пользователь не был найден что делать?")));
     }
 
     @Transactional
     @Override
-    public void deleteUser(Long id) throws NotFoundExeception {
+    public void deleteUser(final Long id) throws NotFoundException {
         repository.deleteById(id);
     }
 
@@ -62,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isExistUser(Long id) {
+    public boolean isExistUser(final Long id) {
         return repository.existsById(id);
     }
 

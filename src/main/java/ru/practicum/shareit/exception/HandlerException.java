@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class HandlerException {
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> notFound(final NotFoundExeception e) {
+    public ResponseEntity<ErrorResponse> notFound(final NotFoundException e) {
         log.warn("404 {}", e.getMessage());
         return new ResponseEntity<>(ErrorResponse.builder()
                 .message(e.getMessage())

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class BadRequestException extends RuntimeException {
-    HttpStatus httpStatus;
+    private final HttpStatus httpStatus;
 
     public BadRequestException(String message) {
         super(message);

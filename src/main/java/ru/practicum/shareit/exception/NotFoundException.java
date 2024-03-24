@@ -4,8 +4,8 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class NotFoundExeception extends RuntimeException {
-    HttpStatus httpStatus;
+public class NotFoundException extends RuntimeException {
+    private final HttpStatus httpStatus;
 
     /**
      * Constructs a new runtime exception with the specified detail message.
@@ -15,7 +15,7 @@ public class NotFoundExeception extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public NotFoundExeception(String message) {
+    public NotFoundException(String message) {
         super(message);
         this.httpStatus = HttpStatus.NOT_FOUND;
     }
@@ -34,7 +34,7 @@ public class NotFoundExeception extends RuntimeException {
      *                unknown.)
      * @since 1.4
      */
-    public NotFoundExeception(String message, Throwable cause) {
+    public NotFoundException(String message, Throwable cause) {
         super(message, cause);
         this.httpStatus = HttpStatus.NOT_FOUND;
     }

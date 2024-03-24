@@ -7,8 +7,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import static ru.practicum.shareit.constant.UserConstant.REGEX_EMAIL;
-import static ru.practicum.shareit.constant.UserConstant.REGEX_LOGIN;
+import static ru.practicum.shareit.user.UserConstant.REGEX_EMAIL;
+import static ru.practicum.shareit.user.UserConstant.REGEX_LOGIN;
 
 @Getter
 @Setter

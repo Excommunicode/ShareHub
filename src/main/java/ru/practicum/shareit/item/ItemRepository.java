@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+import static ru.practicum.shareit.item.ItemConstant.ITEM_REPOSITORY;
+
+@Repository(value = ITEM_REPOSITORY)
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByOwnerId(Long id);
+    List<Item> findAllByOwnerId(final Long id);
 
     @Query(nativeQuery = true,
             value = "SELECT i.* " +
