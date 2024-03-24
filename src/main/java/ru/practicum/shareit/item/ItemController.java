@@ -42,7 +42,7 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDTO> searchByText(@RequestParam String text) {
         log.info("текст получен");
-        return itemService.getItemsByNameOrDescription( text);
+        return itemService.getItemsByNameOrDescription(text);
     }
 
 }
