@@ -15,6 +15,7 @@ public class HandlerException {
                 .message(e.getMessage())
                 .build(), e.getHttpStatus());
     }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> conflictValidException(final ConflictValidException e) {
         log.warn("409 {}", e.getMessage());
