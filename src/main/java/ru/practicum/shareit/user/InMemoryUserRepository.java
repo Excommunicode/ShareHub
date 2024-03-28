@@ -23,7 +23,6 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> updateUser(final Long id, User user) {
-        checkDuplicateEmail(user);
         return Stream.of(user)
                 .filter(x -> USERS.containsKey(x.getId()))
                 .peek(x -> USERS.put(x.getId(), x))
@@ -65,9 +64,6 @@ public class InMemoryUserRepository implements UserRepository {
         return false;
     }
 
-    private boolean checkDuplicateEmail(User user) {
-        return EMAILS.containsValue(user.getEmail());
-    }
 
     @Override
     public void deleteEmail(final String email) {
