@@ -12,10 +12,10 @@ import static ru.practicum.shareit.user.UserConstant.REGEX_LOGIN;
 
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
+@EqualsAndHashCode(of = {"id", "email"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
     Long id;

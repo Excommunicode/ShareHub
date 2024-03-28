@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO addUser(UserDTO userDTO) {
         isExistUserByEmail(userDTO);
-        UserDTO userDTO1 = mapper.toDTO(repository.saveAndFlush(mapper.toModel(userDTO)));
+        UserDTO userDTO1 = mapper.toDTO(repository.save(mapper.toModel(userDTO)));
         return mapper.toDTO(repository.findById(userDTO1.getId()).orElse(null));
     }
 
@@ -45,7 +45,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getById(final Long id) throws NotFoundException {
-        return mapper.toDTO(repository.findById(id).orElseThrow(() -> new NotFoundException("пользователь не был найден что делать?")));
+        return mapper.toDTO(repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("пользователь не был найден что делать?")));
     }
 
     @Transactional

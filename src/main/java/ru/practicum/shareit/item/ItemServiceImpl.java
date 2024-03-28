@@ -31,11 +31,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDTO addItem(final Long userId, ItemDTO itemDTO) {
         isExistUserInDb(userId);
-        if (!(itemDTO.getName() == null || itemDTO.getName().isEmpty() || itemDTO.getDescription() == null
-                || itemDTO.getAvailable() == null)) {
+        if (!(itemDTO.getName() == null || itemDTO.getName().isEmpty() || itemDTO.getDescription() == null ||
+                itemDTO.getAvailable() == null)) {
             itemDTO.setOwner(userMapper.toModel(userService.getById(userId)));
-            ItemDTO itemDTO1 = mapper.toDTO(repository.save(mapper.toModel(itemDTO)));
-            return itemDTO1;
+            return mapper.toDTO(repository.save(mapper.toModel(itemDTO)));
         }
         throw new ValidateException("не валидные данные", HttpStatus.BAD_REQUEST);
     }
@@ -78,7 +77,6 @@ public class ItemServiceImpl implements ItemService {
         }
         final String pattern = "%" + text + "%";
         return mapper.toListDTO(repository.findAllByNameOrDescription(pattern));
-
     }
 
 

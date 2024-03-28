@@ -74,6 +74,7 @@
             <artifactId>lombok-mapstruct-binding</artifactId>
             <version>${lombok-mapstruct-binding.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -283,5 +284,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
