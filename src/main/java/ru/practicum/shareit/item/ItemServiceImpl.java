@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
         if (!(itemDTO.getName() == null || itemDTO.getName().isEmpty() || itemDTO.getDescription() == null ||
                 itemDTO.getAvailable() == null)) {
             itemDTO.setOwner(userMapper.toModel(userService.getById(userId)));
-            return mapper.toDTO(repository.save(mapper.toModel(itemDTO)));
+            return mapper.toDTO(repository.addItem(mapper.toModel(itemDTO)));
         }
         throw new ValidateException("не валидные данные", HttpStatus.BAD_REQUEST);
     }
@@ -56,13 +56,13 @@ public class ItemServiceImpl implements ItemService {
         if (itemDTO.getAvailable() != null) {
             item.setAvailable(itemDTO.getAvailable());
         }
-        repository.save(item);
+        repository.updateItem(item);
         return mapper.toDTO(item);
     }
 
     @Override
     public ItemDTO getItem(final Long itemId) {
-        return mapper.toDTO(repository.findById(itemId).orElseThrow(() -> new NotFoundException("вещь не найдена")));
+        return mapper.toDTO(repository.getItem(itemId).orElseThrow(() -> new NotFoundException("вещь не найдена")));
     }
 
     @Override
@@ -75,8 +75,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        final String pattern = "%" + text + "%";
-        return mapper.toListDTO(repository.findAllByNameOrDescription(pattern));
+        return mapper.toListDTO(repository.findAllByNameOrDescription(text));
     }
 
 

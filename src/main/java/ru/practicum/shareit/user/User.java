@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = {"id", "email"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User   {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
