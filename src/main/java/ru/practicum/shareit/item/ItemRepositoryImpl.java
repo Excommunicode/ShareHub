@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
@@ -19,27 +18,24 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Optional<Item> updateItem(Item itemDTO) {
-        return Stream.of(itemDTO)
-                .filter(x -> ITEMS.containsKey(itemDTO.getId()))
-                .peek(x -> ITEMS.put(itemDTO.getId(), itemDTO))
-                .findFirst();
+    public Item updateItem(Item item) {
+        return ITEMS.put(item.getId(), item);
     }
 
     @Override
-    public Optional<Item> getItem(Long itemId) {
+    public Optional<Item> getItem(final Long itemId) {
         return Optional.of(ITEMS.get(itemId));
     }
 
     @Override
-    public List<Item> findAllByOwnerId(Long userId) {
+    public List<Item> findAllByOwnerId(final Long userId) {
         return ITEMS.values().stream()
                 .filter(x -> x.getOwner().getId().equals(userId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> findAllByNameOrDescription(String text) {
+    public List<Item> findAllByNameOrDescription(final String text) {
         List<Item> itemList = new ArrayList<>();
         for (Item item : ITEMS.values()) {
             if (item.getName().toLowerCase().contains(text.toLowerCase())

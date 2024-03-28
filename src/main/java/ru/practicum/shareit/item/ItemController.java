@@ -23,7 +23,8 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDTO createItem(@RequestHeader(X_SHARER_USER_ID) final Long userId, @Valid @RequestBody ItemDTO itemDTO) {
+    public ItemDTO createItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
+                              @Valid @RequestBody final ItemDTO itemDTO) {
         return itemService.addItem(userId, itemDTO);
     }
 
@@ -31,8 +32,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemDTO updateItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
                               @PathVariable final Long itemId,
-                              @Valid @RequestBody ItemDTO itemDTO) {
-        log.info("запрос получен");
+                              @Valid @RequestBody final ItemDTO itemDTO) {
         return itemService.updateItem(userId, itemId, itemDTO);
     }
 
@@ -48,7 +48,6 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDTO> searchByText(@RequestParam final String text) {
-        log.info("текст получен");
         return itemService.getItemsByNameOrDescription(text);
     }
 }

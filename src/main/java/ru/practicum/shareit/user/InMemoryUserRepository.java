@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
@@ -22,11 +21,10 @@ public class InMemoryUserRepository implements UserRepository {
 
 
     @Override
-    public Optional<User> updateUser(final Long id, User user) {
-        return Stream.of(user)
-                .filter(x -> USERS.containsKey(x.getId()))
-                .peek(x -> USERS.put(x.getId(), x))
-                .findFirst();
+    public User updateUser(User user) {
+        EMAILS.put(user.getEmail(), user.getId());
+        USERS.put(user.getId(), user);
+        return user;
     }
 
 
@@ -56,12 +54,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public boolean existsById(final Long id) {
-        for (Long aLong : USERS.keySet()) {
-            if (aLong.equals(id)) {
-                return true;
-            }
-        }
-        return false;
+       return USERS.containsKey(id);
     }
 
 

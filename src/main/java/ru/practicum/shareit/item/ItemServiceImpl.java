@@ -4,17 +4,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidateException;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Slf4j
 @Service
@@ -22,7 +20,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ItemServiceImpl implements ItemService {
-    ItemRepository repository;
+    ItemRepository itemRepository;
     ItemMapper mapper;
     UserService userService;
     UserMapper userMapper;
@@ -30,22 +28,31 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemDTO addItem(final Long userId, ItemDTO itemDTO) {
+        log.info("Attempting to add item for user ID: {}", userId);
+
         isExistUserInDb(userId);
-        if (!(itemDTO.getName() == null || itemDTO.getName().isEmpty() || itemDTO.getDescription() == null ||
-                itemDTO.getAvailable() == null)) {
-            itemDTO.setOwner(userMapper.toModel(userService.getById(userId)));
-            return mapper.toDTO(repository.addItem(mapper.toModel(itemDTO)));
+        if (itemDTO.getName() == null || itemDTO.getName().isEmpty() || itemDTO.getDescription() == null ||
+                itemDTO.getAvailable() == null) {
+            log.error("Invalid data for adding item: {}, by user ID: {}", itemDTO, userId);
+            throw new BadRequestException("Invalid data for item");
         }
-        throw new ValidateException("не валидные данные", HttpStatus.BAD_REQUEST);
+        itemDTO.setOwner(userMapper.toModel(userService.getById(userId)));
+        ItemDTO newItemDTO = mapper.toDTO(itemRepository.addItem(mapper.toModel(itemDTO)));
+
+        log.info("Item successfully added with ID: {}", newItemDTO.getId());
+        return newItemDTO;
     }
 
     @Transactional
     @Override
     public ItemDTO updateItem(final Long userId, final Long itemId, ItemDTO itemDTO) {
+        log.info("Updating item with ID: {} for user ID: {}", itemId, userId);
+
         isExistUserInDb(userId);
         Item item = mapper.toModel(getItem(itemId));
         if (!item.getOwner().getId().equals(userId)) {
-            throw new NotFoundException("айдишники не совпадают");
+            log.error("User ID: {} does not match owner ID for item ID: {}", userId, itemId);
+            throw new NotFoundException("User ID does not match owner ID");
         }
         if (itemDTO.getName() != null) {
             item.setName(itemDTO.getName());
@@ -56,32 +63,54 @@ public class ItemServiceImpl implements ItemService {
         if (itemDTO.getAvailable() != null) {
             item.setAvailable(itemDTO.getAvailable());
         }
-        repository.updateItem(item);
+
+        itemRepository.updateItem(item);
+
+        log.info("Item with ID: {} updated successfully", item.getId());
         return mapper.toDTO(item);
     }
 
     @Override
     public ItemDTO getItem(final Long itemId) {
-        return mapper.toDTO(repository.getItem(itemId).orElseThrow(() -> new NotFoundException("вещь не найдена")));
+        log.info("Retrieving item by ID: {}", itemId);
+
+        ItemDTO itemDTO = mapper.toDTO(itemRepository.getItem(itemId)
+                .orElseThrow(() -> new NotFoundException("Item not found")));
+
+        log.info("Item retrieved with ID: {}", itemId);
+        return itemDTO;
     }
 
     @Override
     public List<ItemDTO> getItems(final Long userId) {
-        return mapper.toListDTO(repository.findAllByOwnerId(userId));
+        log.info("Retrieving items for user ID: {}", userId);
+
+        List<ItemDTO> items = mapper.toListDTO(itemRepository.findAllByOwnerId(userId));
+
+        log.info("Total items retrieved for user ID: {}: {}", userId, items.size());
+        return items;
     }
 
     @Override
     public List<ItemDTO> getItemsByNameOrDescription(final String text) {
+        log.info("Searching for items by name or description matching: {}", text);
+
         if (text.isEmpty()) {
+            log.info("Search text was empty, returning empty list.");
             return new ArrayList<>();
         }
-        return mapper.toListDTO(repository.findAllByNameOrDescription(text));
+        List<ItemDTO> items = mapper.toListDTO(itemRepository.findAllByNameOrDescription(text));
+
+        log.info("Total items found matching {}: {}", text, items.size());
+        return items;
     }
 
-
     private void isExistUserInDb(final Long userId) {
+        log.info("Checking existence of user with ID: {}", userId);
+
         if (!userService.isExistUser(userId)) {
-            throw new NotFoundException("такого пользователя нет");
+            log.error("No user found with ID: {}", userId);
+            throw new NotFoundException("User does not exist");
         }
     }
 }

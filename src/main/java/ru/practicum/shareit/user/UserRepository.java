@@ -27,7 +27,7 @@ public interface UserRepository {
      * @param user the User entity with updated values
      * @return the updated User entity
      */
-    Optional<User> updateUser(final Long id, User user);
+    User updateUser(User user);
 
     /**
      * Deletes a User entity from the repository based on the ID.
