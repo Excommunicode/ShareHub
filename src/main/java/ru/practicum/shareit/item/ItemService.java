@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
@@ -8,7 +7,7 @@ import java.util.List;
  * It allows for adding, updating, retrieving single items or lists of items,
  * and searching items by name or description.
  */
-@Service
+
 public interface ItemService {
 
     /**
@@ -28,7 +27,7 @@ public interface ItemService {
      * @param itemDTO the new details of the item, encapsulated in a {@link ItemDTO}
      * @return the updated item details, encapsulated in a {@link ItemDTO}
      */
-    ItemDTO updateItem(final Long userId, Long itemId, ItemDTO itemDTO);
+    ItemDTO updateItem(final Long userId, final Long itemId, ItemDTO itemDTO);
 
     /**
      * Retrieves a specific item by its ID.

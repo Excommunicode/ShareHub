@@ -1,7 +1,5 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +8,6 @@ import java.util.Optional;
  * It allows for retrieving User entities by ID, fetching all Users,
  * and checking for existence by email and ID.
  */
-@Repository
 public interface UserRepository {
     /**
      * Adds a new User entity to the repository.

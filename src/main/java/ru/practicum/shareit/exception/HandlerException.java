@@ -1,6 +1,7 @@
 package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,5 +39,12 @@ public class HandlerException {
         return new ResponseEntity<>(ErrorResponse.builder()
                 .message(e.getMessage())
                 .build(), e.getHttpStatus());
+    }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> throwableException(final Exception e) {
+        log.warn("500: {}", e.getMessage());
+        return new ResponseEntity<>(ErrorResponse.builder()
+                .message(e.getMessage())
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

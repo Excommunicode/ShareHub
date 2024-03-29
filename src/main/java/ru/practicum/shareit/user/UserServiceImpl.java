@@ -14,14 +14,12 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper mapper;
 
 
-    @Transactional
     @Override
     public UserDTO addUser(UserDTO userDTO) {
         log.info("Adding new user with email: {}", userDTO.getEmail());
@@ -33,7 +31,6 @@ public class UserServiceImpl implements UserService {
         return newUserDTO;
     }
 
-    @Transactional
     @Override
     public UserDTO updateUser(final Long id, UserDTO userDTO) {
         log.info("Updating user with ID: {}", id);
@@ -58,7 +55,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getById(final Long id) throws NotFoundException {
         log.info("Retrieving user by ID: {}", id);
-        UserDTO userDTO = mapper.toDTO(userRepository.getById(id)
+        final UserDTO userDTO = mapper.toDTO(userRepository.getById(id)
                 .orElseThrow(() -> new NotFoundException("User not found for ID: " + id)));
         log.info("User retrieved with ID: {}", id);
         return userDTO;
@@ -78,7 +75,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> getAll() {
         log.info("Retrieving all users");
 
-        List<UserDTO> users = mapper.toDTOList(userRepository.getAll());
+        final List<UserDTO> users = mapper.toDTOList(userRepository.getAll());
 
         log.info("Total users retrieved: {}", users.size());
         return users;
@@ -86,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isExistUser(final Long id) {
-        boolean exists = userRepository.existsById(id);
+        final boolean exists = userRepository.existsById(id);
 
         log.info("Checking existence of user with ID: {}. Exists: {}", id, exists);
         return exists;

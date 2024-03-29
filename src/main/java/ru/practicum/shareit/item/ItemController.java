@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +12,6 @@ import java.util.List;
 import static ru.practicum.shareit.item.ItemConstant.X_SHARER_USER_ID;
 
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")

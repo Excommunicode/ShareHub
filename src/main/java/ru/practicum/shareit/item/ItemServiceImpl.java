@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.UserMapper;
@@ -17,7 +16,6 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ItemServiceImpl implements ItemService {
     ItemRepository itemRepository;
@@ -25,7 +23,6 @@ public class ItemServiceImpl implements ItemService {
     UserService userService;
     UserMapper userMapper;
 
-    @Transactional
     @Override
     public ItemDTO addItem(final Long userId, ItemDTO itemDTO) {
         log.info("Attempting to add item for user ID: {}", userId);
@@ -43,7 +40,6 @@ public class ItemServiceImpl implements ItemService {
         return newItemDTO;
     }
 
-    @Transactional
     @Override
     public ItemDTO updateItem(final Long userId, final Long itemId, ItemDTO itemDTO) {
         log.info("Updating item with ID: {} for user ID: {}", itemId, userId);
@@ -74,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDTO getItem(final Long itemId) {
         log.info("Retrieving item by ID: {}", itemId);
 
-        ItemDTO itemDTO = mapper.toDTO(itemRepository.getItem(itemId)
+        final ItemDTO itemDTO = mapper.toDTO(itemRepository.getItem(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found")));
 
         log.info("Item retrieved with ID: {}", itemId);
@@ -85,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDTO> getItems(final Long userId) {
         log.info("Retrieving items for user ID: {}", userId);
 
-        List<ItemDTO> items = mapper.toListDTO(itemRepository.findAllByOwnerId(userId));
+        final List<ItemDTO> items = mapper.toListDTO(itemRepository.findAllByOwnerId(userId));
 
         log.info("Total items retrieved for user ID: {}: {}", userId, items.size());
         return items;
@@ -99,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("Search text was empty, returning empty list.");
             return new ArrayList<>();
         }
-        List<ItemDTO> items = mapper.toListDTO(itemRepository.findAllByNameOrDescription(text));
+        final List<ItemDTO> items = mapper.toListDTO(itemRepository.findAllByNameOrDescription(text));
 
         log.info("Total items found matching {}: {}", text, items.size());
         return items;

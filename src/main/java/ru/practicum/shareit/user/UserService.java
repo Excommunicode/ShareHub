@@ -1,7 +1,5 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
@@ -9,7 +7,6 @@ import java.util.List;
  * It provides methods for creating, updating, retrieving, and deleting users, as well as listing all users
  * and checking if a user exists by their ID.
  */
-@Service
 public interface UserService {
 
     /**
