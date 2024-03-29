@@ -40,6 +40,7 @@ public class HandlerException {
                 .message(e.getMessage())
                 .build(), e.getHttpStatus());
     }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> throwableException(final Exception e) {
         log.warn("500: {}", e.getMessage());
