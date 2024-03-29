@@ -3,8 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
-
 
 @Getter
 @Setter

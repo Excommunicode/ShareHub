@@ -25,8 +25,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserDTO updateUser(@PathVariable final Long userId, @RequestBody final UserDTO userDTO) {
+    public UserDTO updateUser(@Valid @PathVariable final Long userId, @RequestBody final UserDTO userDTO) {
         return userService.updateUser(userId, userDTO);
     }
 

@@ -19,7 +19,7 @@ import static ru.practicum.shareit.user.UserConstant.REGEX_LOGIN;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
     Long id;
-    @Pattern(regexp = REGEX_LOGIN, message = "This name is correct")
+    @Pattern(regexp = REGEX_LOGIN, message = "This name is incorrect")
     String name;
     @NotNull(message = "field email should not be empty")
     @Email(regexp = REGEX_EMAIL, message = "Non standard writing of mail")

@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUser(final Long id, UserDTO userDTO) {
         log.info("Updating user with ID: {}", id);
         userDTO.setId(id);
+
         User user = userRepository.getById(id).orElseThrow(() -> new NotFoundException("User not found for ID: " + id));
 
         if (userDTO.getName() != null) {
