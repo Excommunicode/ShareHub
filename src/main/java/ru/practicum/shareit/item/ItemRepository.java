@@ -10,5 +10,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(String name, String description);
 
-    boolean existsItemByIdAndOwner_Id(Long item_id, Long owner_id);
+    boolean existsItemByIdAndOwner_Id(Long itemId, Long ownerId);
 }
