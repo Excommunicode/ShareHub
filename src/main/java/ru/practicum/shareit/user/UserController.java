@@ -1,8 +1,10 @@
+
 package ru.practicum.shareit.user;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +28,19 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDTO updateUser(@Valid @PathVariable final Long userId, @RequestBody final UserDTO userDTO) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserDTO updateUser(@PathVariable final Long userId, @RequestBody final UserDTO userDTO) {
         return userService.updateUser(userId, userDTO);
     }
 
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable final Long userId) {
+        userService.deleteUser(userId);
+    }
 
     @GetMapping("/{userId}")
-    public UserDTO getUser(@PathVariable final Long userId) {
+    public UserDTO getUser(@PathVariable Long userId) {
         return userService.getById(userId);
     }
 
@@ -40,9 +49,5 @@ public class UserController {
         return userService.getAll();
     }
 
-    @DeleteMapping("/{userId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable final Long userId) {
-        userService.deleteUser(userId);
-    }
+
 }

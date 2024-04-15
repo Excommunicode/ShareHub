@@ -6,6 +6,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
+
     ItemDTO toDTO(Item item);
 
     Item toModel(ItemDTO itemDTO);

@@ -13,7 +13,7 @@ public interface ItemService {
     /**
      * Adds a new item associated with a specific user.
      *
-     * @param userId the ID of the user who owns the item
+     * @param userId  the ID of the user who owns the item
      * @param itemDTO the item to add, encapsulated in a {@link ItemDTO}
      * @return the added item, encapsulated in a {@link ItemDTO}, with its newly assigned ID
      */
@@ -22,8 +22,8 @@ public interface ItemService {
     /**
      * Updates the details of an existing item.
      *
-     * @param userId the ID of the user who owns the item
-     * @param itemId the ID of the item to update
+     * @param userId  the ID of the user who owns the item
+     * @param itemId  the ID of the item to update
      * @param itemDTO the new details of the item, encapsulated in a {@link ItemDTO}
      * @return the updated item details, encapsulated in a {@link ItemDTO}
      */
@@ -35,7 +35,7 @@ public interface ItemService {
      * @param itemId the ID of the item to retrieve
      * @return the requested item, encapsulated in a {@link ItemDTO}
      */
-    ItemDTO getItem(final Long itemId);
+    ItemDTO findItemById(final Long itemId, Long userId);
 
     /**
      * Retrieves all items owned by a specific user.

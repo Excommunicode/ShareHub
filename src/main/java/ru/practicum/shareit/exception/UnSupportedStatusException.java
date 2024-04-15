@@ -1,12 +1,11 @@
 package ru.practicum.shareit.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
-public class BadRequestException extends RuntimeException {
-    private final HttpStatus httpStatus;
-
+@AllArgsConstructor
+public class UnSupportedStatusException extends RuntimeException {
     /**
      * Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
@@ -15,8 +14,7 @@ public class BadRequestException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public BadRequestException(String message) {
+    public UnSupportedStatusException(String message) {
         super(message);
-        this.httpStatus = HttpStatus.BAD_REQUEST;
     }
 }
