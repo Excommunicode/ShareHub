@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -35,10 +34,4 @@ public class Item {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     User owner;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "request_id")
-    Request request;
-
-
 }
