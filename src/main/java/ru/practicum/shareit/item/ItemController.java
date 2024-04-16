@@ -18,6 +18,7 @@ import static ru.practicum.shareit.item.ItemConstant.X_SHARER_USER_ID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ItemController {
     ItemService itemService;
+    CommentService commentService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,8 +36,8 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDTO getByID(@PathVariable final Long itemId) {
-        return itemService.getItem(itemId);
+    public ItemDTO getById(@PathVariable final Long itemId, @RequestHeader(X_SHARER_USER_ID) final Long userId) {
+        return itemService.findItemById(itemId, userId);
     }
 
     @GetMapping
@@ -47,5 +48,12 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDTO> searchByText(@RequestParam final String text) {
         return itemService.getItemsByNameOrDescription(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDTO createComment(@RequestHeader(X_SHARER_USER_ID) Long userId,
+                                    @PathVariable Long itemId,
+                                    @RequestBody CommentDTO commentDTO) {
+        return commentService.addComment(userId, itemId, commentDTO);
     }
 }

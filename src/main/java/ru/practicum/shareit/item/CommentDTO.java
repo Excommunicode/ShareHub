@@ -1,8 +1,7 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.item;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
@@ -14,9 +13,10 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = {"id"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ItemRequest {
+public class CommentDTO {
     Long id;
-    String description;
-    User requestor;
+    String text;
+    Long authorId;
+    String authorName;
     LocalDateTime created;
 }

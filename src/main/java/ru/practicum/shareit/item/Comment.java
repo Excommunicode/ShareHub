@@ -5,33 +5,36 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "items")
+@Table(name = "comments")
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = {"id"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Item {
+public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
 
-    @Column(name = "name", nullable = false)
-    String name;
+    @Column(name = "text")
+    String text;
 
-    @Column(name = "description", nullable = false)
-    String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    Item item;
 
-    @Column(name = "is_available", nullable = false)
-    Boolean available;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    User author;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner_id")
-    User owner;
+    @Column(name = "created")
+    LocalDateTime created = LocalDateTime.now();
 }
