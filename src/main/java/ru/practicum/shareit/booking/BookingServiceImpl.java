@@ -101,39 +101,45 @@ public class BookingServiceImpl implements BookingService {
         return bookings;
     }
 
-    private List<BookingDTOResponse> retrieveBookingsBasedOnState(Long userId, BookingState state, boolean isOwner) {
+    private List<BookingDTOResponse> retrieveBookingsBasedOnState(final Long userId, final BookingState state, final boolean isOwner) {
         Sort sort = getDescendingSort();
         LocalDateTime now = getCurrentTime();
-
         List<Booking> result;
         switch (state) {
-            case ALL:
+            case ALL: {
                 result = isOwner ? bookingRepository.getBookingByItem_Owner_Id(userId, sort)
                         : bookingRepository.getBookingByBooker_IdOrderByIdDesc(userId);
                 break;
-            case PAST:
+            }
+            case PAST: {
                 result = isOwner ? bookingRepository.findBookingByItem_Owner_IdAndEndIsBefore(userId, now, sort)
                         : bookingRepository.findByBooker_IdAndEndIsBefore(userId, now, sort);
                 break;
-            case FUTURE:
+            }
+            case FUTURE: {
                 result = isOwner ? bookingRepository.findBookingByItem_Owner_IdAndStartIsAfter(userId, now, sort)
                         : bookingRepository.findByBooker_IdAndStartIsAfter(userId, now, sort);
                 break;
-            case CURRENT:
+            }
+            case CURRENT: {
                 result = isOwner ? bookingRepository.findBookingByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(userId, now, now)
                         : bookingRepository.findByBooker_IdAndStartIsBeforeAndEndIsAfter(userId, now, now);
                 break;
-            case WAITING:
+            }
+            case WAITING: {
                 result = isOwner ? bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDesc(userId, WAITING, sort)
                         : bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, WAITING, sort);
                 break;
-            case REJECTED:
+            }
+            case REJECTED: {
                 result = isOwner ? bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDesc(userId, REJECTED, sort)
                         : bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, REJECTED, sort);
                 break;
-            default:
+            }
+            default: {
                 log.error("Unknown booking state requested: {}", state);
                 throw new UnSupportedStatusException("Unknown state: " + state);
+            }
         }
         return bookingMapper.toDTOList(result);
     }

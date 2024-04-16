@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapperShortDTO;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingShortDTO;
@@ -17,8 +18,12 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
 import static ru.practicum.shareit.booking.BookingState.*;
 
@@ -105,23 +110,23 @@ public class ItemServiceImpl implements ItemService, CommentService {
         return responseItem;
     }
 
-
     @Override
     public List<ItemDTO> getItems(final Long userId) {
         log.debug("Retrieving items for user ID: {}", userId);
 
-        final LocalDateTime now = LocalDateTime.now();
-        final List<ItemDTO> items = itemMapper.toListDTO(itemRepository.findAllByOwnerIdOrderById(userId));
 
-        items.forEach(item -> {
-            item.setLastBooking(bookingMapperShortDTO.toDTO(bookingRepository
-                    .findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(item.getId(), now)
-                    .orElse(null)));
-            item.setNextBooking(bookingMapperShortDTO.toDTO(bookingRepository
-                    .findFirstByItem_IdAndStartIsAfterOrderByStartAsc(item.getId(), now)
-                    .orElse(null)));
-        });
-        return items;
+        List<ItemDTO> items = itemMapper.toListDTO(itemRepository.findAllByOwnerIdOrderById(userId));
+
+        Map<Long, List<Booking>> bookings = bookingRepository.findAllByItemInAndStatusOrderByStartAsc(itemMapper.toModelList(items), APPROVED)
+                .stream()
+                .collect(groupingBy(Booking::getItemId, toList()));
+
+        List<ItemDTO> collect = items
+                .stream()
+                .map(itemDTO -> seBookings(itemDTO, bookings.get(itemDTO.getId())))
+                .collect(toList());
+        log.info("Number of items retrieved: {}", collect.size());
+        return collect;
     }
 
     @Override
@@ -139,7 +144,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
 
     @Transactional
     @Override
-    public CommentDTO addComment(Long userId, Long itemId, CommentDTO commentDTO) {
+    public CommentDTO addComment(final Long userId, final Long itemId, CommentDTO commentDTO) {
         log.info("Adding a comment with id: {}", userId);
 
         if (commentDTO.getText() == null || commentDTO.getText().trim().isEmpty()) {
@@ -150,7 +155,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId)));
         ItemDTO item = itemMapper.toDTO(getItemById(itemId));
 
-        if (!bookingRepository.existsByBookerIdAndItemIdAndStatusInAndEndBefore(userId, itemId,
+        if (!bookingRepository.existsByBookerIdAndItem_IdAndStatusInAndEndBefore(userId, itemId,
                 List.of(APPROVED, CANCELED), LocalDateTime.now())) {
             throw new BadRequestException("Booking already in progress");
         }
@@ -207,5 +212,36 @@ public class ItemServiceImpl implements ItemService, CommentService {
             item.setAvailable(itemDTO.getAvailable());
         }
     }
+
+    private ItemDTO seBookings(ItemDTO itemDTO, final List<Booking> bookings) {
+        if (bookings == null) {
+            return itemDTO;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Booking lastBooking = (bookings
+                .stream()
+                .filter(booking -> booking.getStart().isBefore(now))
+                .max(Comparator.comparing(Booking::getEnd))
+                .orElse(null));
+
+        Booking nextBooking = bookings
+                .stream()
+                .filter(booking -> booking.getStart().isAfter(now))
+                .min(Comparator.comparing(Booking::getStart))
+                .orElse(null);
+
+
+        if (lastBooking != null) {
+            itemDTO.setLastBooking(bookingMapperShortDTO.toDTO(lastBooking));
+        }
+
+        if (lastBooking != null) {
+            itemDTO.setNextBooking(bookingMapperShortDTO.toDTO(nextBooking));
+        }
+        return itemDTO;
+    }
+
 }
 

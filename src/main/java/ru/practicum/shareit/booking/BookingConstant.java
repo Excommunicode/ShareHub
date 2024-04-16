@@ -7,4 +7,5 @@ import java.time.format.DateTimeFormatter;
 @UtilityClass
 public final class BookingConstant {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    public static final String ALL = "ALL";
 }

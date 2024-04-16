@@ -43,4 +43,7 @@ public class Booking {
     @JoinColumn(name = "status")
     BookingState status;
 
+    public Long getItemId() {
+        return item.getId();
+    }
 }

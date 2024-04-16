@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.practicum.shareit.booking.BookingConstant.ALL;
 import static ru.practicum.shareit.item.ItemConstant.X_SHARER_USER_ID;
 
 @RestController
@@ -42,16 +43,14 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDTOResponse> getBookings(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                                @RequestParam(value = "state", defaultValue = "ALL",
-                                                        required = false) final BookingState state) {
+                                                @RequestParam(defaultValue = ALL) final BookingState state) {
         return bookingService.getBookings(userId, state);
     }
 
     @GetMapping("/owner")
     public List<BookingDTOResponse> getBookingsOwner(
             @RequestHeader(X_SHARER_USER_ID) final Long userId,
-            @RequestParam(value = "state", defaultValue = "ALL",
-                    required = false) final BookingState state) {
+            @RequestParam(defaultValue = ALL) final BookingState state) {
         return bookingService.getOwnerBookings(userId, state);
     }
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import ru.practicum.shareit.item.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +32,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @param endBefore the datetime before which the booking should end
      * @return true if such a booking exists, false otherwise
      */
-    boolean existsByBookerIdAndItemIdAndStatusInAndEndBefore(Long bookerId, Long itemId, List<BookingState> status, LocalDateTime endBefore);
+    boolean existsByBookerIdAndItem_IdAndStatusInAndEndBefore(Long bookerId, Long itemId, List<BookingState> status, LocalDateTime endBefore);
 
     /**
      * Retrieves a booking based on a complex query that matches either the booking ID and booker ID or another booking ID and item owner ID.
@@ -121,13 +122,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      */
     List<Booking> findByBooker_IdAndStartIsAfter(Long userId, LocalDateTime start, Sort sort);
 
-    /**
-     * Finds all bookings with a specific status, ordered by booking ID in descending order.
-     *
-     * @param status the booking state to filter by
-     * @return a list of bookings with the specified status, ordered by ID in descending order
-     */
-    List<Booking> findBookingByStatusOrderByIdDesc(BookingState status);
 
     /**
      * Finds all bookings for a booker with a specific status, ordered by the start date in descending order.
@@ -149,23 +143,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      */
     List<Booking> findByItem_Owner_IdAndStatusOrderByStartDesc(Long ownerId, BookingState status, Sort sort);
 
-    /**
-     * Retrieves the first booking for an item that starts after a specified datetime, ordered by the start date ascending.
-     *
-     * @param itemId the ID of the item
-     * @param start  the start datetime to compare
-     * @return an optional containing the first booking if found, or empty if no such booking exists
-     */
-    Optional<Booking> findFirstByItem_IdAndStartIsAfterOrderByStartAsc(Long itemId, LocalDateTime start);
-
-    /**
-     * Retrieves the first booking for an item that ends before a specified datetime, ordered by the end date descending.
-     *
-     * @param itemId the ID of the item
-     * @param end    the end datetime to compare
-     * @return an optional containing the first booking if found, or empty if no such booking exists
-     */
-    Optional<Booking> findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(Long itemId, LocalDateTime end);
 
     /**
      * Retrieves the first booking for an item that starts before a specified datetime and whose status is not as specified, ordered by start descending.
@@ -188,4 +165,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findFirstByItem_IdAndStartIsAfterAndStatusIsNotOrderByStartAsc(Long itemId, LocalDateTime start, BookingState status);
 
 
+    /**
+     * Retrieves a list of {@link Booking} entities where the associated {@link Item} is in the provided list
+     * and the {@link BookingState} matches the specified status. The results are sorted by the start date of the booking
+     * in ascending order.
+     *
+     * @param items   the list of {@link Item} entities to include in the search. These represent the items
+     *                related to the bookings we want to find.
+     * @param status  the {@link BookingState} to filter the bookings. Only bookings with this status will be returned.
+     * @return        a list of {@link Booking} entities filtered by item and status, sorted by the start date in ascending order.
+     *                If no bookings are found with the given criteria, an empty list is returned.
+     * @throws IllegalArgumentException if {@code items} is null or empty, or if {@code status} is null.
+     */
+    List<Booking> findAllByItemInAndStatusOrderByStartAsc(List<Item> items, BookingState status);
 }

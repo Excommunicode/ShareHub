@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ShareItApp {
     public static void main(String[] args) {
         SpringApplication.run(ShareItApp.class, args);
-        System.out.println("Java shareit running on the port 8080");
+        System.err.println("Java shareit running on the port 8080");
     }
 
 }
