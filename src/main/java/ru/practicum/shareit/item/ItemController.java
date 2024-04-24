@@ -4,12 +4,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static ru.practicum.shareit.item.ItemConstant.X_SHARER_USER_ID;
+import static ru.practicum.shareit.utils.Constant.X_SHARER_USER_ID;
+import static ru.practicum.shareit.utils.Marker.OnCreate;
+import static ru.practicum.shareit.utils.Marker.OnUpdate;
 
 
 @RestController
@@ -22,16 +25,18 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDTO createItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                              @Valid @RequestBody final ItemDTO itemDTO) {
+    public ItemDTO createItem(
+            @RequestHeader(X_SHARER_USER_ID) final Long userId,
+            @Validated(OnCreate.class) @RequestBody final ItemDTO itemDTO) {
         return itemService.addItem(userId, itemDTO);
     }
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTO updateItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                              @PathVariable final Long itemId,
-                              @Valid @RequestBody final ItemDTO itemDTO) {
+    public ItemDTO updateItem(
+            @RequestHeader(X_SHARER_USER_ID) final Long userId,
+            @PathVariable final Long itemId,
+            @Validated(OnUpdate.class) @RequestBody final ItemDTO itemDTO) {
         return itemService.updateItem(userId, itemId, itemDTO);
     }
 
@@ -51,9 +56,10 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDTO createComment(@RequestHeader(X_SHARER_USER_ID) Long userId,
-                                    @PathVariable Long itemId,
-                                    @RequestBody CommentDTO commentDTO) {
+    public CommentDTO createComment(
+            @RequestHeader(X_SHARER_USER_ID) final Long userId,
+            @PathVariable final Long itemId,
+            @Valid @RequestBody final CommentDTO commentDTO) {
         return commentService.addComment(userId, itemId, commentDTO);
     }
 }

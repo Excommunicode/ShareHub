@@ -16,14 +16,20 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = {"id"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingDTO {
+
     Long id;
-    @Future(message = "The start time musnt be in the past ")
-    @NotNull
+
+    @Future(message = "The start time is not valid")
+    @NotNull(message = "Start cannot be null")
     LocalDateTime start;
-    @Future
-    @NotNull
+
+    @Future(message = "The future time is not valid")
+    @NotNull(message = "End cannot be null")
     LocalDateTime end;
+
     Long itemId;
+
     Long bookerId;
+
     BookingState status;
 }

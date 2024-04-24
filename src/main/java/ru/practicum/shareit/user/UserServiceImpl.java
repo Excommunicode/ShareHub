@@ -31,8 +31,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO addUser(UserDTO userDTO) {
         log.debug("Adding a user with email: {}", userDTO.getEmail());
 
-        User savedUser = repository.saveAndFlush(mapper.toModel(userDTO));
-        UserDTO savedUserDTO = mapper.toDTO(savedUser);
+        UserDTO savedUserDTO = mapper.toDTO(repository.saveAndFlush(mapper.toModel(userDTO)));
 
         log.info("User added with ID: {}", savedUserDTO.getId());
         return savedUserDTO;
@@ -71,20 +70,17 @@ public class UserServiceImpl implements UserService {
         return mapper.toDTO(user);
     }
 
+
     @Override
     public List<UserDTO> getAll() {
         log.debug("Retrieving all users");
 
         final List<UserDTO> userDTOs = new ArrayList<>();
         final Sort sort = Sort.by(Sort.Direction.ASC, "id");
-        Pageable page = PageRequest.of(0, 1024, sort);
+        Pageable page = PageRequest.of(0, 10, sort);
         Page<User> userPage = repository.findAll(page);
-
         do {
-            userPage.getContent().forEach(user -> {
-                UserDTO userDTO = mapper.toDTO(user);
-                userDTOs.add(userDTO);
-            });
+            userDTOs.addAll(mapper.toDTOList(userPage.getContent()));
             if (userPage.hasNext()) {
                 page = userPage.nextOrLastPageable();
                 userPage = repository.findAll(page);

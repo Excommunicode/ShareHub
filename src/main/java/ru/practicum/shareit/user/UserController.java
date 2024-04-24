@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
+
+import static ru.practicum.shareit.utils.Marker.OnCreate;
+import static ru.practicum.shareit.utils.Marker.OnUpdate;
 
 @Slf4j
 @Validated
@@ -23,13 +25,15 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO createUser(@Valid @RequestBody final UserDTO userDTO) {
+    public UserDTO createUser(@Validated(OnCreate.class) @RequestBody final UserDTO userDTO) {
         return userService.addUser(userDTO);
     }
 
     @PatchMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO updateUser(@PathVariable final Long userId, @RequestBody final UserDTO userDTO) {
+    public UserDTO updateUser(
+            @PathVariable final Long userId,
+            @Validated(OnUpdate.class) @RequestBody final UserDTO userDTO) {
         return userService.updateUser(userId, userDTO);
     }
 
@@ -48,6 +52,4 @@ public class UserController {
     public List<UserDTO> getAll() {
         return userService.getAll();
     }
-
-
 }

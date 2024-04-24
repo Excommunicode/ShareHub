@@ -42,8 +42,4 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     @JoinColumn(name = "status")
     BookingState status;
-
-    public Long getItemId() {
-        return item.getId();
-    }
 }

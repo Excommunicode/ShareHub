@@ -42,22 +42,20 @@ public class ItemServiceImpl implements ItemService, CommentService {
     CommentMapper commentMapper;
     BookingMapperShortDTO bookingMapperShortDTO;
 
+
     @Transactional
     @Override
     public ItemDTO addItem(final Long userId, ItemDTO itemDTO) {
         log.debug("Starting addItem operation for user ID: {}", userId);
 
-        if (isItemDataInvalid(itemDTO)) {
-            log.warn("Attempt to add item with invalid data by user ID: {}", userId);
-            throw new BadRequestException("Provided item data is invalid.");
-        }
-
         verifyUserExists(userId);
-        itemDTO.setOwner(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found")));
-        Item savedItem = itemRepository.save(itemMapper.toModel(itemDTO));
-        log.info("New item added with ID: {}", savedItem.getId());
 
-        return itemMapper.toDTO(savedItem);
+        itemDTO.setOwner(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found")));
+
+        ItemDTO savedItem = itemMapper.toDTO(itemRepository.save(itemMapper.toModel(itemDTO)));
+
+        log.info("New item added with ID: {}", savedItem.getId());
+        return savedItem;
     }
 
     @Transactional
@@ -119,7 +117,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
 
         Map<Long, List<Booking>> bookings = bookingRepository.findAllByItemInAndStatusOrderByStartAsc(itemMapper.toModelList(items), APPROVED)
                 .stream()
-                .collect(groupingBy(Booking::getItemId, toList()));
+                .collect(groupingBy(x -> x.getItem().getId(), toList()));
 
         List<ItemDTO> collect = items
                 .stream()
@@ -145,11 +143,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
     @Transactional
     @Override
     public CommentDTO addComment(final Long userId, final Long itemId, CommentDTO commentDTO) {
-        log.info("Adding a comment with id: {}", userId);
-
-        if (commentDTO.getText() == null || commentDTO.getText().trim().isEmpty()) {
-            throw new BadRequestException("Comment text cannot be empty");
-        }
+        log.debug("Adding a comment with id: {}", userId);
 
         UserDTO user = userMapper.toDTO(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId)));
@@ -180,12 +174,6 @@ public class ItemServiceImpl implements ItemService, CommentService {
         }
     }
 
-    private boolean isItemDataInvalid(final ItemDTO itemDTO) {
-        boolean invalid = itemDTO.getName() == null || itemDTO.getName().trim().isEmpty() ||
-                itemDTO.getDescription() == null || itemDTO.getAvailable() == null;
-        log.debug("Item data validation result: {}", invalid ? "Invalid" : "Valid");
-        return invalid;
-    }
 
     private Item getItemById(final Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> {
@@ -242,6 +230,4 @@ public class ItemServiceImpl implements ItemService, CommentService {
         }
         return itemDTO;
     }
-
 }
-

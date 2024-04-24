@@ -187,7 +187,7 @@ public class BookingServiceImpl implements BookingService {
 
     private void validateBookingPeriod(BookingDTO bookingDTO) {
         if (bookingDTO.getEnd().isBefore(bookingDTO.getStart()) || bookingDTO.getStart().equals(bookingDTO.getEnd())) {
-            log.warn("Invalid booking period from {} to {} for user ID: {}", bookingDTO.getStart(), bookingDTO.getEnd());
+            log.warn("Invalid booking period from {} to {}", bookingDTO.getStart(), bookingDTO.getEnd());
             throw new BadRequestException("Booking period is invalid");
         }
     }
