@@ -285,7 +285,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findByItem_Owner_IdAndStatusOrderByStartDesc() {
+    void findByItem_Owner_IdAndStatusOrderByStartDesc_Test() {
         List<Booking> bookings = Arrays.asList(booking, Booking.builder()
                 .id(2L)
                 .start(now.minusDays(2))
@@ -309,19 +309,19 @@ class BookingRepositoryTest {
 
 
     @Test
-    void findFirstByItem_IdAndStartIsBeforeAndStatusIsNotOrderByStartDesc() {
+    void findFirstByItem_IdAndStartIsBeforeAndStatusIsNotOrderByStartDesc_Test() {
 
     }
 
     @Test
-    void findFirstByItem_IdAndStartIsAfterAndStatusIsNotOrderByStartAsc() {
+    void findFirstByItem_IdAndStartIsAfterAndStatusIsNotOrderByStartAsc_Test() {
     }
 
     @Test
-    void findAllByItemInAndStatusOrderByStartAsc() {
+    void findAllByItemInAndStatusOrderByStartAsc_Test() {
     }
 
     @Test
-    void findBookingByStatusOrderByIdDesc() {
+    void findBookingByStatusOrderByIdDesc_Test() {
     }
 }

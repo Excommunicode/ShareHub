@@ -1,3 +1,4 @@
+
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
@@ -246,5 +247,4 @@ class BookingServiceImplTest {
         when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
         assertThrows(NotFoundException.class, () -> bookingService.updateBooking(100L, true, booking.getItem().getOwner().getId()));
     }
-
 }
