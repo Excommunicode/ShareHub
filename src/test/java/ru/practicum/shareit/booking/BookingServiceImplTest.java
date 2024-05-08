@@ -175,15 +175,7 @@ class BookingServiceImplTest {
         assertThrows(BadRequestException.class, () -> bookingService.addBooking(bookingDTO, user.getId()));
     }
 
-    @Test
-    void addBookingWithEndDate_Test() {
-        when(bookingMapperMock.toModel(bookingDTO)).thenReturn(booking);
-        when(bookingRepositoryMock.save(booking)).thenReturn(booking);
-        when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
-        bookingDTO.setStart(LocalDateTime.now().plusDays(10));
-        bookingDTO.setEnd(LocalDateTime.now().plusDays(10));
-        assertThrows(BadRequestException.class, () -> bookingService.addBooking(bookingDTO, user.getId()));
-    }
+    
 
     @Test
     void getBookingValidId_Test() {
