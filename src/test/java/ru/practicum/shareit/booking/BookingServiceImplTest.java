@@ -163,8 +163,7 @@ class BookingServiceImplTest {
         when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
         assertThrows(BadRequestException.class, () -> bookingService.addBooking(bookingDTO, user.getId()));
     }
-
-
+    
     @Test
     void addBookingWithWrongBookingId_Test() {
         when(bookingMapperMock.toModel(bookingDTO)).thenReturn(booking);
@@ -174,8 +173,6 @@ class BookingServiceImplTest {
         bookingDTO.setEnd(LocalDateTime.now().plusDays(8));
         assertThrows(BadRequestException.class, () -> bookingService.addBooking(bookingDTO, user.getId()));
     }
-
-    
 
     @Test
     void getBookingValidId_Test() {
