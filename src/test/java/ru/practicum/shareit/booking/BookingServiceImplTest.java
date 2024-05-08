@@ -72,7 +72,6 @@ class BookingServiceImplTest {
         anotherUser.setEmail("anadawdasdawdawdaotheruser@example.com");
         userRepository.save(anotherUser);
 
-
         ItemDTO itemDTO = new ItemDTO();
         itemDTO.setId(1L);
         itemDTO.setName("BookingItem");
@@ -108,14 +107,11 @@ class BookingServiceImplTest {
 
     @Test
     void addBookingTest() {
-
-
         when(bookingMapperMock.toModel(bookingDTO)).thenReturn(booking);
         when(bookingRepositoryMock.save(booking)).thenReturn(booking);
         when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
 
         BookingDTOResponse result = bookingService.addBooking(bookingDTO, user.getId());
-
 
         assertThat(result).isNotNull();
         verify(bookingRepositoryMock, times(1)).save(booking);
@@ -133,7 +129,6 @@ class BookingServiceImplTest {
         } catch (NotFoundException e) {
             assertThat(e).isInstanceOf(NotFoundException.class);
         }
-
     }
 
     @Test
@@ -163,7 +158,7 @@ class BookingServiceImplTest {
         when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
         assertThrows(BadRequestException.class, () -> bookingService.addBooking(bookingDTO, user.getId()));
     }
-    
+
     @Test
     void addBookingWithWrongBookingId_Test() {
         when(bookingMapperMock.toModel(bookingDTO)).thenReturn(booking);
