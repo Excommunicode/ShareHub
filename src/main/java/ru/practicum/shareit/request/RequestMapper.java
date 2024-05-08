@@ -1,12 +1,12 @@
 package ru.practicum.shareit.request;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+import static ru.practicum.shareit.utils.Constant.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface RequestMapper {
 
     RequestDTO toDTO(Request user);

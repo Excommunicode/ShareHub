@@ -1,32 +1,34 @@
 package ru.practicum.shareit.request;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "requests")
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = "id")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString(of = {"id", "requestor"})
 public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "description")
-    String description;
+    private String description;
+
+    @Column(name = "created")
+    private LocalDateTime created;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "requestor_id")
-    User requestor;
+    private User requestor;
 }

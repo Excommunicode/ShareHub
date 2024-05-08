@@ -10,6 +10,6 @@ public enum BookingState {
     CURRENT,
     FUTURE,
     NoContentException,
-    UNSUPPORTED_STATUS;
+    UNSUPPORTED_STATUS
 }
 

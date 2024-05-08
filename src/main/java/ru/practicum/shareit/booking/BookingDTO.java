@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
@@ -9,27 +8,26 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = {"id"})
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString(of = {"id", "itemId", "bookerId", "status"})
 public class BookingDTO {
 
-    Long id;
+    private Long id;
 
     @Future(message = "The start time is not valid")
     @NotNull(message = "Start cannot be null")
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @Future(message = "The future time is not valid")
     @NotNull(message = "End cannot be null")
-    LocalDateTime end;
+    private LocalDateTime end;
 
-    Long itemId;
+    private Long itemId;
 
-    Long bookerId;
+    private Long bookerId;
 
-    BookingState status;
+    private BookingState status;
 }

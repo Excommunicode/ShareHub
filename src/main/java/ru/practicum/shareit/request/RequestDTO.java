@@ -1,24 +1,25 @@
 package ru.practicum.shareit.request;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = "id")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString(of = {"id", "requestor"})
 public class RequestDTO {
-    Long id;
+    private Long id;
     @NotNull(message = "Description cannot be null")
     @NotEmpty(message = "Description cannot be empty")
-    String description;
-    User requestor;
+    private String description;
+    private Long requesterId;
+    private LocalDateTime created;
+    private User requestor;
 }

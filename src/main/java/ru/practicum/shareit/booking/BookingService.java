@@ -47,7 +47,7 @@ public interface BookingService {
      * @param state  the state of bookings to filter by
      * @return a list of booking response DTOs matching the specified criteria
      */
-    List<BookingDTOResponse> getBookings(Long userId, BookingState state);
+    List<BookingDTOResponse> getBookings(Long userId, BookingState state, Integer from, Integer size);
 
     /**
      * Retrieves all bookings for items owned by a user, filtered by the state of the booking.
@@ -56,7 +56,5 @@ public interface BookingService {
      * @param state  the state of bookings to filter by (e.g., PENDING, CANCELLED)
      * @return a list of booking response DTOs for bookings on the user's owned items matching the specified criteria
      */
-    List<BookingDTOResponse> getOwnerBookings(Long userId, BookingState state);
+    List<BookingDTOResponse> getOwnerBookings(Long userId, BookingState state, Integer from, Integer size);
 }
-
-

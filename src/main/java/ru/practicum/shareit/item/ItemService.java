@@ -43,7 +43,7 @@ public interface ItemService {
      * @param userId the ID of the user whose items to retrieve
      * @return a list of items owned by the user, each encapsulated in a {@link ItemDTO}
      */
-    List<ItemDTO> getItems(final Long userId);
+    List<ItemDTO> getItems(final Long userId, Integer from, Integer size);
 
     /**
      * Searches for items by matching the provided text against their names and descriptions.
@@ -51,5 +51,5 @@ public interface ItemService {
      * @param text the text to match against item names and descriptions
      * @return a list of items that match the criteria, each encapsulated in a {@link ItemDTO}
      */
-    List<ItemDTO> getItemsByNameOrDescription(final String text);
+    List<ItemDTO> getItemsByNameOrDescription(final String text, Integer from, Integer size);
 }

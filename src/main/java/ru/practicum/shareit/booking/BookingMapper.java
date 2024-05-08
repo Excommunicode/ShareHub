@@ -6,7 +6,9 @@ import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+import static ru.practicum.shareit.utils.Constant.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface BookingMapper {
 
     BookingDTOResponse toDTO(Booking booking);
@@ -17,6 +19,4 @@ public interface BookingMapper {
 
 
     List<BookingDTOResponse> toDTOList(List<Booking> bookingList);
-
-    List<Booking> toModelList(List<BookingDTO> bookingDTOS);
 }

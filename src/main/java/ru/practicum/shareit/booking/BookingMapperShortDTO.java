@@ -6,7 +6,9 @@ import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+import static ru.practicum.shareit.utils.Constant.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface BookingMapperShortDTO {
     @Mappings({@Mapping(source = "booker.id", target = "bookerId")})
     BookingShortDTO toDTO(Booking booking);

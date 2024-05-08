@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.BookingShortDTO;
 import ru.practicum.shareit.user.User;
 
@@ -18,29 +17,47 @@ import static ru.practicum.shareit.utils.Marker.OnCreate;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = {"id"})
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString(of = {"id", "owner", "requestId"})
 public class ItemDTO {
 
-    Long id;
+    private Long id;
 
     @NotBlank(message = "Name cannot be blank", groups = OnCreate.class)
-    String name;
+    private String name;
 
     @NotBlank(message = "Description cannot be blank", groups = OnCreate.class)
-    String description;
+    private String description;
 
     @NotNull(message = "Available cannot be null", groups = OnCreate.class)
-    Boolean available;
+    private Boolean available;
 
-    User owner;
+    private User owner;
 
-    BookingShortDTO lastBooking;
+    private BookingShortDTO lastBooking;
 
-    BookingShortDTO nextBooking;
+    private BookingShortDTO nextBooking;
 
-    List<CommentDTO> comments;
+    private List<CommentDTO> comments;
 
-    LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created = LocalDateTime.now();
 
-    Long requestId;
+    private Long requestId;
+    /*private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "is_available", nullable = false)
+    private Boolean available;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_id")
+    private Request request;*/
 }

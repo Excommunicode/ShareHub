@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * It allows for retrieving User entities by ID, fetching all Users,
  * and checking for existence by email and ID.
  */
-
 public interface UserRepository extends JpaRepository<User, Long> {
-    boolean existsById(Long userId);
 }

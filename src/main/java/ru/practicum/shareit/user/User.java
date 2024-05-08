@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
@@ -9,23 +8,22 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(of = "id")
 @Table(name = "users")
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = {"id", "email"})
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "name")
-    String name;
+    private String name;
 
     @Column(name = "email", unique = true)
-    String email;
+    private String email;
 }

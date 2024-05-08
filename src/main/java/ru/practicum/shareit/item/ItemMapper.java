@@ -4,14 +4,17 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+import static ru.practicum.shareit.utils.Constant.SPRING;
+
+
+@Mapper(componentModel = SPRING)
 public interface ItemMapper {
 
-    Item toModel(ItemDTO itemDTO);
+    Item toModel(ItemDTO itemDto);
 
     ItemDTO toDTO(Item item);
 
     List<ItemDTO> toListDTO(List<Item> modelList);
 
-    List<Item> toModelList(List<ItemDTO> itemDTOList);
+    List<Item> toItemList(List<ItemDTO> itemDTOList);
 }

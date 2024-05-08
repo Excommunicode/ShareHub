@@ -1,7 +1,9 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.Item;
 
 import java.time.LocalDateTime;
@@ -24,158 +26,198 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     /**
-     * Checks if there is any booking that matches the given booker ID, item ID, list of statuses, and is ending before a specified date.
+     * Updates the status of bookings with the specified ID to the given status.
+     *
+     * @param status The new status of the bookings.
+     * @param id     The ID of the bookings to be updated.
+     */
+    @Modifying
+    @Query(nativeQuery = true,
+            value = "UPDATE bookings SET status = :status WHERE id = :id")
+    int updateBookingsByStatus(String status, Long id);
+
+    /**
+     * Checks if there exists a booking with the given booker ID, item ID, status, and end date before the specified date/time.
      *
      * @param bookerId  the ID of the booker
-     * @param itemId    the ID of the item booked
-     * @param status    a list of booking states
-     * @param endBefore the datetime before which the booking should end
-     * @return true if such a booking exists, false otherwise
+     * @param itemId    the ID of the item
+     * @param status    the list of booking states to match against
+     * @param endBefore the end date/time before which the booking should end
+     * @return true if a booking exists with the given criteria, false otherwise
      */
     boolean existsByBookerIdAndItem_IdAndStatusInAndEndBefore(Long bookerId, Long itemId, List<BookingState> status, LocalDateTime endBefore);
 
     /**
-     * Retrieves a booking based on a complex query that matches either the booking ID and booker ID or another booking ID and item owner ID.
+     * Retrieves a Booking by the specified id and either the booker's id or the item's owner id.
      *
-     * @param id       the first booking ID to match
-     * @param bookerId the booker ID to match
-     * @param id2      the second booking ID to match
-     * @param itemIdu  the item owner ID to match
-     * @return the found booking, or null if no booking matches the criteria
+     * @param id       The id of the Booking to retrieve.
+     * @param bookerId The id of the booker.
+     * @param id2      An optional id parameter.
+     * @param itemId   The id of the item's owner.
+     * @return The Booking that matches the specified criteria, or null if no such Booking exists.
      */
-    Booking getBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(Long id, Long bookerId, Long id2, Long itemIdu);
+    Optional<Booking> getBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(Long id, Long bookerId, Long id2, Long itemId);
 
     /**
-     * Finds all bookings for a booker where the booking starts before and ends after specified datetime.
+     * Retrieves a list of bookings for a specific booker within a given time range.
      *
      * @param bookerId the ID of the booker
-     * @param start    the datetime before which the booking starts
-     * @param end      the datetime after which the booking ends
+     * @param start    the start datetime of the time range
+     * @param end      the end datetime of the time range
+     * @param pageable the pagination information
+     * @return a list of Booking objects that match the given criteria
+     */
+    List<Booking> findByBooker_IdAndStartIsBeforeAndEndIsAfter(Long bookerId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    /**
+     * Finds all bookings associated with a specific booker ID.
+     *
+     * @param bookerId The ID of the booker.
+     * @param start    The index of the first result to retrieve (0-indexed).
+     * @param limit    The maximum number of results to retrieve.
+     * @return A list of bookings associated with the booker ID, ordered by start date in descending order,
+     * with pagination applied (starting from the given start index and limiting the number of results to the given limit).
+     */
+    @Query(nativeQuery = true,
+            value = "SELECT * " +
+                    "FROM bookings b " +
+                    "LEFT JOIN users u on u.id = b.booker_id " +
+                    "WHERE u.id = :bookerId " +
+                    "ORDER BY b.start_date DESC " +
+                    "OFFSET :start " +
+                    "LIMIT :limit")
+    List<Booking> findAllByBooker_Id(Long bookerId, Integer start, Integer limit);
+
+    /**
+     * Retrieves a list of bookings owned by a specific booker.
+     *
+     * @param bookerId The ID of the booker.
+     * @param pageable The pagination information.
+     * @return A list of bookings owned by the booker.
+     */
+    List<Booking> getBookingByItem_Owner_Id(Long bookerId, Pageable pageable);
+
+    /**
+     * Finds a list of bookings where the owner of the item is the given bookerId and the end date is before the specified end date.
+     *
+     * @param bookerId the ID of the booker (item owner)
+     * @param end      the end date to compare with
+     * @param pageable the pageable information
      * @return a list of bookings matching the criteria
      */
-    List<Booking> findByBooker_IdAndStartIsBeforeAndEndIsAfter(Long bookerId, LocalDateTime start, LocalDateTime end);
+    List<Booking> findBookingByItem_Owner_IdAndEndIsBefore(Long bookerId, LocalDateTime end, Pageable pageable);
 
     /**
-     * Retrieves all bookings made by a specific booker, ordered by booking ID in descending order.
+     * Find bookings by item owner ID and start date is after the given date.
      *
-     * @param bookerId the ID of the booker
-     * @return a list of bookings ordered by ID in descending order
+     * @param bookerId the ID of the booking owner
+     * @param start    the start date to filter the bookings
+     * @param pageable the pagination information
+     * @return a list of bookings that match the given criteria
      */
-    List<Booking> getBookingByBooker_IdOrderByIdDesc(Long bookerId);
+    List<Booking> findBookingByItem_Owner_IdAndStartIsAfter(Long bookerId, LocalDateTime start, Pageable pageable);
 
     /**
-     * Finds all bookings for an item's owner, ordered as specified.
+     * Finds bookings based on the owner ID of the item, start and end date-time of the booking.
      *
-     * @param bookerId the ID of the item owner
-     * @param sort     the sorting criteria
-     * @return a sorted list of bookings
+     * @param bookerId The ID of the owner of the item.
+     * @param start    The start date-time of the booking.
+     * @param end      The end date-time of the booking.
+     * @param pageable The page information for pagination and sorting.
+     * @return A list of bookings that match the given criteria.
      */
-    List<Booking> getBookingByItem_Owner_Id(Long bookerId, Sort sort);
+    List<Booking> findBookingByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(Long bookerId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
 
     /**
-     * Finds all bookings for an item's owner that end before a specified datetime, sorted as specified.
+     * Finds a list of bookings with a specific booker ID and end date before a given date.
      *
-     * @param bookerId the ID of the item owner
-     * @param end      the end datetime to compare
-     * @param sort     the sorting criteria
-     * @return a sorted list of bookings that end before the specified datetime
+     * @param userId The ID of the booker.
+     * @param end    The end date to compare against.
+     * @param start  The starting index for pagination.
+     * @param limit  The maximum number of results to return.
+     * @return A list of Booking objects that match the specified criteria.
      */
-    List<Booking> findBookingByItem_Owner_IdAndEndIsBefore(Long bookerId, LocalDateTime end, Sort sort);
+    @Query(nativeQuery = true,
+            value = "SELECT b.* " +
+                    "FROM bookings b " +
+                    "LEFT JOIN users u on u.id = b.booker_id " +
+                    "WHERE u.id = :userId " +
+                    "AND b.end_date < :end " +
+                    "ORDER BY b.id DESC " +
+                    "OFFSET :start " +
+                    "LIMIT :limit")
+    List<Booking> findByBooker_IdAndEndIsBefore(Long userId, LocalDateTime end, Integer start, Integer limit);
 
     /**
-     * Finds all bookings for an item's owner that start after a specified datetime.
+     * Finds bookings by booker ID and start date after a specified date.
      *
-     * @param bookerId the ID of the item owner
-     * @param start    the start datetime to compare
-     * @param sort     the sorting criteria
-     * @return a sorted list of bookings that start after the specified datetime
+     * @param userId   the ID of the booker
+     * @param start    the start date to filter the bookings by
+     * @param pageable the pagination information for the query
+     * @return a list of bookings that match the specified booker ID and start date
      */
-    List<Booking> findBookingByItem_Owner_IdAndStartIsAfter(Long bookerId, LocalDateTime start, Sort sort);
+
+    List<Booking> findByBooker_IdAndStartIsAfter(Long userId, LocalDateTime start, Pageable pageable);
 
     /**
-     * Finds all bookings for an item's owner that start before and end after specified datetime.
+     * Retrieves a list of bookings for a specific booker and status, ordered by start date in descending order.
      *
-     * @param bookerId the ID of the item owner
-     * @param start    the datetime before which the booking starts
-     * @param end      the datetime after which the booking ends
-     * @return a list of bookings meeting the specified criteria
+     * @param userId   the ID of the booker
+     * @param status   the booking state
+     * @param pageable the pagination information
+     * @return a list of bookings
      */
-    List<Booking> findBookingByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(Long bookerId, LocalDateTime start, LocalDateTime end);
+    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(Long userId, BookingState status, Pageable pageable);
 
     /**
-     * Finds all bookings for a booker that end before a specified datetime, sorted as specified.
+     * Find bookings by item owner's ID and status, ordered by start date in descending order.
      *
-     * @param userId the ID of the booker
-     * @param end    the end datetime to compare
-     * @param sort   the sorting criteria
-     * @return a sorted list of bookings that end before the specified datetime
+     * @param ownerId  The ID of the item owner.
+     * @param status   The booking status.
+     * @param pageable The pagination information.
+     * @return The list of bookings matching the criteria.
      */
-    List<Booking> findByBooker_IdAndEndIsBefore(Long userId, LocalDateTime end, Sort sort);
+    List<Booking> findByItem_Owner_IdAndStatusOrderByStartDesc(Long ownerId, BookingState status, Pageable pageable);
 
     /**
-     * Finds all bookings for a booker that start after a specified datetime, sorted as specified.
+     * Finds the first booking with the given item ID where the start date is before the specified date and the status is not the given status, ordered by start date in descending
+     * order.
      *
-     * @param userId the ID of the booker
-     * @param start  the start datetime to compare
-     * @param sort   the sorting criteria
-     * @return a sorted list of bookings that start after the specified datetime
-     */
-    List<Booking> findByBooker_IdAndStartIsAfter(Long userId, LocalDateTime start, Sort sort);
-
-
-    /**
-     * Finds all bookings for a booker with a specific status, ordered by the start date in descending order.
-     *
-     * @param userId the ID of the booker
-     * @param status the booking state to filter by
-     * @param sort   the sorting criteria
-     * @return a sorted list of bookings with the specified status
-     */
-    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(Long userId, BookingState status, Sort sort);
-
-    /**
-     * Finds all bookings for an item owner with a specific status, ordered by the start date in descending order.
-     *
-     * @param ownerId the ID of the item owner
-     * @param status  the booking state to filter by
-     * @param sort    the sorting criteria
-     * @return a sorted list of bookings with the specified status
-     */
-    List<Booking> findByItem_Owner_IdAndStatusOrderByStartDesc(Long ownerId, BookingState status, Sort sort);
-
-
-    /**
-     * Retrieves the first booking for an item that starts before a specified datetime and whose status is not as specified, ordered by start descending.
-     *
-     * @param itemId the ID of the item
-     * @param start  the start datetime to compare
-     * @param status the booking state not to match
-     * @return an optional containing the first booking if found, or empty if no such booking exists
+     * @param itemId The ID of the item.
+     * @param start  The date to compare the start date with.
+     * @param status The status to exclude.
+     * @return An Optional containing the first booking that satisfies the conditions, or an empty Optional if no such booking is found.
      */
     Optional<Booking> findFirstByItem_IdAndStartIsBeforeAndStatusIsNotOrderByStartDesc(Long itemId, LocalDateTime start, BookingState status);
 
     /**
-     * Retrieves the first booking for an item that starts after a specified datetime and whose status is not as specified, ordered by start ascending.
+     * Returns the first Booking object with the given item id that has a start date after the specified start date
+     * and status is not equal to the specified status. The results are ordered by start date in ascending order.
      *
-     * @param itemId the ID of the item
-     * @param start  the start datetime to compare
-     * @param status the booking state not to match
-     * @return an optional containing the first booking if found, or empty if no such booking exists
+     * @param itemId the item id to search for
+     * @param start  the start date to compare with
+     * @param status the status to exclude
+     * @return the first Booking object matching the criteria, or Optional.empty() if no match is found
      */
     Optional<Booking> findFirstByItem_IdAndStartIsAfterAndStatusIsNotOrderByStartAsc(Long itemId, LocalDateTime start, BookingState status);
 
+    /**
+     * Retrieves a list of bookings based on the given list of items, booking state, and sort order of start date in ascending order.
+     *
+     * @param items    The list of items.
+     * @param status   The booking state.
+     * @param pageable The pageable object for sorting and pagination.
+     * @return A list of Booking objects that match the given criteria.
+     */
+    List<Booking> findAllByItemInAndStatusOrderByStartAsc(List<Item> items, BookingState status, Pageable pageable);
 
     /**
-     * Retrieves a list of {@link Booking} entities where the associated {@link Item} is in the provided list
-     * and the {@link BookingState} matches the specified status. The results are sorted by the start date of the booking
-     * in ascending order.
+     * Finds a list of bookings by status, ordered by id in descending order.
      *
-     * @param items   the list of {@link Item} entities to include in the search. These represent the items
-     *                related to the bookings we want to find.
-     * @param status  the {@link BookingState} to filter the bookings. Only bookings with this status will be returned.
-     * @return        a list of {@link Booking} entities filtered by item and status, sorted by the start date in ascending order.
-     *                If no bookings are found with the given criteria, an empty list is returned.
-     * @throws IllegalArgumentException if {@code items} is null or empty, or if {@code status} is null.
+     * @param state    The status of the bookings to find
+     * @param pageable The pageable object defining pagination and sorting
+     * @return A list of bookings that match the given status, ordered by id in descending order
      */
-    List<Booking> findAllByItemInAndStatusOrderByStartAsc(List<Item> items, BookingState status);
+    List<Booking> findBookingByStatusOrderByIdDesc(BookingState state, Pageable pageable);
 }
