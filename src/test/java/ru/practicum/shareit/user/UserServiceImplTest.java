@@ -31,8 +31,8 @@ class UserServiceImplTest {
     @MockBean
     private UserMapper userMapper;
 
-    @DisplayName("Добавление пользователя в сервисе")
     @Test
+    @DisplayName("Добавление пользователя: при корректных данных пользователь добавляется успешно")
     void addUserTest() {
         User user = new User();
         user.setName("FirstNameLastName");
@@ -55,8 +55,8 @@ class UserServiceImplTest {
         assertThat(result.getEmail()).isEqualTo(userDTO.getEmail());
     }
 
-    @DisplayName("Обновление существующего пользователя")
     @Test
+    @DisplayName("Обновление пользователя: при существующем пользователе данные обновляются")
     void updateUser_existingUser_updatesUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -76,8 +76,8 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).save(any());
     }
 
-    @DisplayName("Обновление не существующего пользователя с ошибкой")
     @Test
+    @DisplayName("Обновление пользователя: при отсутствии пользователя возвращается исключение NotFoundException")
     void updateUser_notExistingUser_returnsNotFoundException() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -92,8 +92,8 @@ class UserServiceImplTest {
         }
     }
 
-    @DisplayName("Удаление существующего пользователя")
     @Test
+    @DisplayName("Удаление пользователя: при существующем пользователе он успешно удаляется")
     void deleteUser_existingUser_deletesUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -107,8 +107,8 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).deleteById(any());
     }
 
-    @DisplayName("Удаление не существующего пользователя с ошибкой")
     @Test
+    @DisplayName("Удаление пользователя: при отсутствии пользователя возвращается исключение NotFoundException")
     void deleteUser_notExistingUser_returnsNotFoundException() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -130,6 +130,7 @@ class UserServiceImplTest {
 
 
     @Test
+    @DisplayName("Получение пользователя: при существующем пользователе он успешно возвращается")
     void getUser_existingUser_returnsUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -152,6 +153,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Получение пользователя: при отсутствии пользователя возвращается исключение NotFoundException")
     void getUser_notExistingUser_returnsNotFoundException() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -174,6 +176,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Получение всех пользователей: при существовании пользователей они успешно возвращаются")
     void getAllUsers_existingUser_returnsUsers() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -193,12 +196,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Получение всех пользователей: при отсутствии пользователей возвращается пустой список")
     void getAllUsers_notExistingUser_returnsNotFoundException() {
         assertEquals(Collections.emptyList(), userService.getAll(0, 20));
     }
 
 
     @Test
+    @DisplayName("Проверка наличия пользователя: при существующем пользователе возвращает true")
     void isExistUserTest_existingUser_returnsTrue() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Name");
@@ -218,6 +223,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Получение всех пользователей: при отсутствии пользователей возвращает пустой список")
     void getAllUsers_whenNoUsers_mustReturnEmptyList() {
         int page = 0;
         int size = 20;

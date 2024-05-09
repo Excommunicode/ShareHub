@@ -241,4 +241,5 @@ class ItemServiceImplTest {
         assertThrows(BadRequestException.class, () ->
                 commentService.addComment(createOwner.getId(), createItem.getId(), CommentDTO.builder().build()));
     }
+
 }

@@ -55,11 +55,12 @@ public class UserControllerTest {
     }
 
     @Test
+    @SneakyThrows
     @DisplayName("Создание пользователя: при некорректном вводе должен возвращаться статус 400 Bad Request")
-    void createUser_WhenInvalidInput_ShouldReturn400BadRequest() throws Exception {
+    void createUser_WhenInvalidInput_ShouldReturn400BadRequest()  {
         UserDTO user = UserDTO.builder()
                 .name("")
-                .email("johnexample.com")
+                .email("user@example.com")
                 .build();
 
         mockMvc.perform(post("/users")
