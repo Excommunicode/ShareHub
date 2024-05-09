@@ -134,7 +134,7 @@ class RequestServiceImplTest {
     @Test
     void getRequestsDTO_whenUserNotFound_thenThrowsException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> requestServiceImpl.getRequestsDTO(1l, 0, 1));
+        assertThrows(NotFoundException.class, () -> requestServiceImpl.getRequestsDTO(1L, 0, 1));
     }
 
     @Test
