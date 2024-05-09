@@ -22,7 +22,6 @@ public class BookingMapperImplTest {
         Item expectedItem= Item.builder().id(1L).build();
         User expectedUser= User.builder().id(1L).build();
         BookingState expectedStatus= BookingState.REJECTED;
-
         Booking booking = Booking.builder()
                 .id(expectedId)
                 .start(expectedStart)
@@ -31,9 +30,7 @@ public class BookingMapperImplTest {
                 .booker(expectedUser)
                 .status(expectedStatus)
                 .build();
-
         BookingDTOResponse result = bookingMapper.toDTO(booking);
-
         assertThat(result.getId()).isEqualTo(expectedId);
         assertThat(result.getStart()).isEqualTo(expectedStart);
         assertThat(result.getEnd()).isEqualTo(expectedEnd);

@@ -137,9 +137,8 @@ class RequestServiceImplTest {
         assertThrows(NotFoundException.class, () -> requestServiceImpl.getRequestsDTO(1l, 0, 1));
     }
 
-
     @Test
-    void getAllRequestsPagableDTO_whenUserNotFound_thenThrowsException() {
+    void getAllRequestsDTOWhenUserNotFoundThenThrowsException() {
         when(requestRepository.findAllByRequestor_IdNot(anyLong(), any())).thenReturn(new PageImpl<>(Collections.emptyList()));
         assertTrue(requestServiceImpl.getAllRequestsPagableDTO(1L, 0, 1).isEmpty());
         verify(requestRepository).findAllByRequestor_IdNot(1L, PageRequest.of(0, 1));

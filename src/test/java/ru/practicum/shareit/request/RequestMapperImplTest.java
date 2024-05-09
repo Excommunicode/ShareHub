@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class RequestMapperImplTest {
 
     @Test
@@ -18,7 +20,7 @@ public class RequestMapperImplTest {
         Request request = null;
         RequestDTO actual = mapper.toDTO(request);
 
-        Assertions.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -41,7 +43,7 @@ public class RequestMapperImplTest {
 
         RequestDTO actual = mapper.toDTO(request);
 
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -51,7 +53,7 @@ public class RequestMapperImplTest {
         RequestDTO requestDTO = null;
         Request actual = mapper.toModel(requestDTO);
 
-        Assertions.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -74,8 +76,9 @@ public class RequestMapperImplTest {
 
         Request actual = mapper.toModel(requestDTO);
 
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
+
     @Test
     public void toDTOList_NullInput_ReturnsNull() {
         RequestMapperImpl mapper = new RequestMapperImpl();
@@ -83,7 +86,7 @@ public class RequestMapperImplTest {
         List<Request> requests = null;
         List<RequestDTO> actual = mapper.toDTOList(requests);
 
-        Assertions.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -125,8 +128,9 @@ public class RequestMapperImplTest {
 
         List<RequestDTO> actual = mapper.toDTOList(requests);
 
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
+
     @Test
     public void toRequestList_NullInput_ReturnsNull() {
         RequestMapperImpl mapper = new RequestMapperImpl();
@@ -134,7 +138,7 @@ public class RequestMapperImplTest {
         List<RequestDTO> requestDTOs = null;
         List<Request> actual = mapper.toRequestList(requestDTOs);
 
-        Assertions.assertNull(actual);
+        assertNull(actual);
     }
 
     @Test
@@ -172,6 +176,6 @@ public class RequestMapperImplTest {
 
         List<Request> actual = mapper.toRequestList(requestDTOs);
 
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 }
