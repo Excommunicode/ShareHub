@@ -16,12 +16,12 @@ public class BookingMapperImplTest {
 
     @Test
     void shouldReturnBookingDTOResponse_WhenToDTOReceivesValidBooking() {
-        Long expectedId= 1L;
+        Long expectedId = 1L;
         LocalDateTime expectedStart = LocalDateTime.now();
         LocalDateTime expectedEnd = LocalDateTime.now().plusDays(2);
-        Item expectedItem= Item.builder().id(1L).build();
-        User expectedUser= User.builder().id(1L).build();
-        BookingState expectedStatus= BookingState.REJECTED;
+        Item expectedItem = Item.builder().id(1L).build();
+        User expectedUser = User.builder().id(1L).build();
+        BookingState expectedStatus = BookingState.REJECTED;
         Booking booking = Booking.builder()
                 .id(expectedId)
                 .start(expectedStart)
@@ -50,7 +50,7 @@ public class BookingMapperImplTest {
 
     @Test
     void shouldReturnBooking_WhenToModelReceivesValidBookingDTO() {
-        Long expectedId= 1L;
+        Long expectedId = 1L;
         LocalDateTime expectedStart = LocalDateTime.now();
         LocalDateTime expectedEnd = LocalDateTime.now().plusDays(2);
         Long expectedItemId = 1L;
