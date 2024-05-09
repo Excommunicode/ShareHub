@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"id"})
 @ToString(of = {"id", "requestor"})
 public class RequestDTO {
     private Long id;
