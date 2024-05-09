@@ -7,10 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.UnSupportedStatusException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemDTO;
 import ru.practicum.shareit.item.ItemMapper;
@@ -20,6 +24,7 @@ import ru.practicum.shareit.user.UserDTO;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -51,6 +56,8 @@ class BookingServiceImplTest {
     private BookingDTOResponse bookingDTOResponse;
     private static final int from = 0;
     private static final int size = 20;
+    Sort sort = Sort.by(Sort.Direction.DESC, "start");
+    Pageable pageable = PageRequest.of(from, size, sort);
 
     @BeforeEach
     void setUp() {
@@ -241,5 +248,157 @@ class BookingServiceImplTest {
         when(bookingRepositoryMock.save(approvedBooking)).thenReturn(approvedBooking);
         when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
         assertThrows(NotFoundException.class, () -> bookingService.updateBooking(100L, true, booking.getItem().getOwner().getId()));
+    }
+
+    @Test
+    void getBookingsTestAll() {
+        when(bookingMapperMock.toDTOList(bookingRepository.findAllByBooker_Id(user.getId(), from, size))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getBookings(user.getId(), ALL, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getBookingsTestPast() {
+        LocalDateTime now = LocalDateTime.now();
+        when(bookingMapperMock.toDTOList(bookingRepository.findByBooker_IdAndEndIsBefore(user.getId(), now, from, size))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getBookings(user.getId(), PAST, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getBookingsTestFuture() {
+        LocalDateTime now = LocalDateTime.now();
+        when(bookingMapperMock.toDTOList(bookingRepository.findByBooker_IdAndStartIsAfter(user.getId(), now, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getBookings(user.getId(), FUTURE, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getBookingsTestCurrent() {
+        LocalDateTime now = LocalDateTime.now();
+        when(bookingMapperMock.toDTOList(bookingRepository.findByBooker_IdAndStartIsBeforeAndEndIsAfter(user.getId(), now, now, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getBookings(user.getId(), CURRENT, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getBookingsTestWaiting() {
+        when(bookingMapperMock.toDTOList(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(user.getId(), WAITING, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getBookings(user.getId(), WAITING, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getBookingsTestRejected() {
+        when(bookingMapperMock.toDTOList(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(user.getId(), REJECTED, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getBookings(user.getId(), REJECTED, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getBookingsTestUnsupportedStatus() {
+        assertThrows(UnSupportedStatusException.class, () -> {
+            bookingService.getBookings(user.getId(), UNSUPPORTED_STATUS, from, size);
+        });
+    }
+
+    @Test
+    void getOwnerBookingsTestAll() {
+        when(bookingMapperMock.toDTOList(bookingRepository.getBookingByItem_Owner_Id(user.getId(), pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getOwnerBookings(user.getId(), ALL, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getOwnerBookingsTestPast() {
+        LocalDateTime now = LocalDateTime.now();
+        when(bookingMapperMock.toDTOList(bookingRepository.findBookingByItem_Owner_IdAndEndIsBefore(user.getId(), now, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getOwnerBookings(user.getId(), PAST, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getOwnerBookingsTestFuture() {
+        LocalDateTime now = LocalDateTime.now();
+        when(bookingMapperMock.toDTOList(bookingRepository.findBookingByItem_Owner_IdAndStartIsAfter(user.getId(), now, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getOwnerBookings(user.getId(), FUTURE, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getOwnerBookingsTestCurrent() {
+        LocalDateTime now = LocalDateTime.now();
+        when(bookingMapperMock.toDTOList(bookingRepository.findBookingByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(user.getId(), now, now, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getOwnerBookings(user.getId(), CURRENT, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getOwnerBookingsTestRejected() {
+        when(bookingMapperMock.toDTOList(bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDesc(user.getId(), REJECTED, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getOwnerBookings(user.getId(), REJECTED, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getOwnerBookingsTestWaiting() {
+        when(bookingMapperMock.toDTOList(bookingRepository.findBookingByStatusOrderByIdDesc(WAITING, pageable))).thenReturn(List.of(bookingDTOResponse));
+
+        List<BookingDTOResponse> result = bookingService.getOwnerBookings(user.getId(), WAITING, from, size);
+
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isEqualTo(bookingDTOResponse);
+    }
+
+    @Test
+    void getOwnerBookingsTestUnsupportedStatus() {
+        assertThrows(UnSupportedStatusException.class, () -> {
+            bookingService.getOwnerBookings(user.getId(), UNSUPPORTED_STATUS, from, size);
+        });
     }
 }

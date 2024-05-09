@@ -180,4 +180,7 @@ public class CommentMapperImplTest {
         assertNull(result.getId());
         assertNull(result.getName());
     }
+
+
+
 }

@@ -236,6 +236,7 @@ class ItemServiceImplTest {
         assertThat(commentDTO.getAuthorName(), equalTo(comment.getAuthor().getName()));
     }
 
+
     @Test
     void addEmptyComment() {
         assertThrows(BadRequestException.class, () ->
