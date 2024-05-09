@@ -19,23 +19,4 @@ public class NotFoundException extends RuntimeException {
         super(message);
         this.httpStatus = HttpStatus.NOT_FOUND;
     }
-
-    /**
-     * Constructs a new runtime exception with the specified detail message and
-     * cause.  <p>Note that the detail message associated with
-     * {@code cause} is <i>not</i> automatically incorporated in
-     * this runtime exception's detail message.
-     *
-     * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
-     * @param cause   the cause (which is saved for later retrieval by the
-     *                {@link #getCause()} method).  (A {@code null} value is
-     *                permitted, and indicates that the cause is nonexistent or
-     *                unknown.)
-     * @since 1.4
-     */
-    public NotFoundException(String message, Throwable cause) {
-        super(message, cause);
-        this.httpStatus = HttpStatus.NOT_FOUND;
-    }
 }

@@ -23,7 +23,6 @@ public class UserDTO {
 
     private Long id;
 
-    @NotNull(message = "Name cannot be null", groups = OnCreate.class)
     @NotBlank(message = "Name cannot be blank", groups = OnCreate.class)
     @Pattern(regexp = REGEX_LOGIN, message = "This name is incorrect", groups = {OnCreate.class, OnUpdate.class})
     private String name;

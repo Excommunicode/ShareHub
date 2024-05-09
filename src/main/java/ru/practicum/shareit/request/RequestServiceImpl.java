@@ -44,10 +44,9 @@ public class RequestServiceImpl implements RequestService {
 
         requestDTO.setRequestor(userMapper.toModel(userDTO));
         requestDTO.setCreated(LocalDateTime.now());
-        RequestDTO savedRequestDTO = requestMapper.toDTO(requestRepository.save(requestMapper.toModel(requestDTO)));
+        RequestDTOResponse responseDTO = requestMapperResponse.toDTO(requestRepository.save(requestMapper.toModel(requestDTO)));
         log.info("Request saved for user id: {}", userId);
 
-        RequestDTOResponse responseDTO = requestMapperResponse.toDTO(requestMapper.toModel(savedRequestDTO));
         log.info("RequestDTOResponse created with created date set to now: {}", responseDTO);
         return responseDTO;
     }

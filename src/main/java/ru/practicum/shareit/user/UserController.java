@@ -32,7 +32,7 @@ public class UserController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO createUser(@Validated(OnCreate.class) @RequestBody final UserDTO userDTO) {
+    public UserDTO createUser(@Validated(OnCreate.class) @RequestBody UserDTO userDTO) {
         return userService.addUser(userDTO);
     }
 
@@ -45,8 +45,8 @@ public class UserController {
      */
     @PatchMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO updateUser(@PathVariable final Long userId,
-                              @Validated(OnUpdate.class) @RequestBody final UserDTO userDTO) {
+    public UserDTO updateUser(@PathVariable Long userId,
+                              @Validated(OnUpdate.class) @RequestBody UserDTO userDTO) {
         return userService.updateUser(userId, userDTO);
     }
 
@@ -57,7 +57,7 @@ public class UserController {
      */
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable final Long userId) {
+    public void deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
     }
 
@@ -78,8 +78,8 @@ public class UserController {
      * @return a list of all users, each represented as a {@link UserDTO}
      */
     @GetMapping
-    public List<UserDTO> getAll(@Positive @RequestParam(defaultValue = INITIAL_X)  Integer from,
-                                @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<UserDTO> getAll(@Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
+                                @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
         return userService.getAll(from, size);
     }
 }

@@ -12,6 +12,4 @@ public interface RequestMapperResponse {
     Request toModel(RequestDTOResponse userDTO);
 
     List<RequestDTOResponse> toDTOList(List<Request> modelList);
-
-    List<Request> toRequestList(List<RequestDTOResponse> userDTOList);
 }

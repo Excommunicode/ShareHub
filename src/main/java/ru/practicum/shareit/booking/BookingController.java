@@ -27,7 +27,7 @@ public class BookingController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingDTOResponse createBooking(@RequestHeader(X_SHARER_USER_ID) final Long userid,
+    public BookingDTOResponse createBooking(@RequestHeader(X_SHARER_USER_ID) Long userid,
                                             @Valid @RequestBody BookingDTO bookingDTO) {
         return bookingService.addBooking(bookingDTO, userid);
     }
@@ -42,9 +42,9 @@ public class BookingController {
      */
     @PatchMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
-    public BookingDTOResponse updateBookingStatus(@PathVariable final Long bookingId,
-                                                  @RequestParam final Boolean approved,
-                                                  @RequestHeader(X_SHARER_USER_ID) final Long ownerId) {
+    public BookingDTOResponse updateBookingStatus(@PathVariable Long bookingId,
+                                                  @RequestParam Boolean approved,
+                                                  @RequestHeader(X_SHARER_USER_ID) Long ownerId) {
         return bookingService.updateBooking(bookingId, approved, ownerId);
     }
 
@@ -57,8 +57,8 @@ public class BookingController {
      * @return a response DTO containing the booking data if accessible by the user, otherwise might return null or an error
      */
     @GetMapping("/{bookingId}")
-    public BookingDTOResponse getBooking(@PathVariable final Long bookingId,
-                                         @RequestHeader(X_SHARER_USER_ID) final Long userId) {
+    public BookingDTOResponse getBooking(@PathVariable Long bookingId,
+                                         @RequestHeader(X_SHARER_USER_ID) Long userId) {
         return bookingService.getBooking(bookingId, userId);
     }
 
@@ -72,10 +72,10 @@ public class BookingController {
      * @return a list of booking response DTOs matching the specified criteria
      */
     @GetMapping
-    public List<BookingDTOResponse> getBookings(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                                @RequestParam(defaultValue = "ALL") final BookingState state,
-                                                @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                                @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<BookingDTOResponse> getBookings(@RequestHeader(X_SHARER_USER_ID) Long userId,
+                                                @RequestParam(defaultValue = "ALL") BookingState state,
+                                                @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
+                                                @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
         return bookingService.getBookings(userId, state, from, size);
     }
 
@@ -89,10 +89,10 @@ public class BookingController {
      * @return a list of booking response DTOs for bookings on the user's owned items matching the specified criteria
      */
     @GetMapping("/owner")
-    public List<BookingDTOResponse> getBookingsOwner(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                                     @RequestParam(defaultValue = "ALL") final BookingState state,
-                                                     @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                                     @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<BookingDTOResponse> getBookingsOwner(@RequestHeader(X_SHARER_USER_ID) Long userId,
+                                                     @RequestParam(defaultValue = "ALL") BookingState state,
+                                                     @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
+                                                     @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
         return bookingService.getOwnerBookings(userId, state, from, size);
     }
 }

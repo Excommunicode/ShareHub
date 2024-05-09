@@ -46,9 +46,9 @@ public class ItemController {
      */
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTO updateItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                              @PathVariable final Long itemId,
-                              @Validated(OnUpdate.class) @RequestBody final ItemDTO itemDTO) {
+    public ItemDTO updateItem(@RequestHeader(X_SHARER_USER_ID) Long userId,
+                              @PathVariable Long itemId,
+                              @Validated(OnUpdate.class) @RequestBody ItemDTO itemDTO) {
         return itemService.updateItem(userId, itemId, itemDTO);
     }
 
@@ -60,7 +60,7 @@ public class ItemController {
      * @return the requested item, encapsulated in a {@link ItemDTO}
      */
     @GetMapping("/{itemId}")
-    public ItemDTO getById(@PathVariable final Long itemId, @RequestHeader(X_SHARER_USER_ID) final Long userId) {
+    public ItemDTO getById(@PathVariable final Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
         return itemService.findItemById(itemId, userId);
     }
 
@@ -71,9 +71,9 @@ public class ItemController {
      * @return a list of items owned by the user, each encapsulated in a {@link ItemDTO}
      */
     @GetMapping
-    public List<ItemDTO> getAllItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                    @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                    @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<ItemDTO> getAllItem(@RequestHeader(X_SHARER_USER_ID) Long userId,
+                                    @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
+                                    @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
         return itemService.getItems(userId, from, size);
     }
 
@@ -84,9 +84,9 @@ public class ItemController {
      * @return a list of items that match the criteria, each encapsulated in a {@link ItemDTO}
      */
     @GetMapping("/search")
-    public List<ItemDTO> searchByText(@RequestParam final String text,
-                                      @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                      @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<ItemDTO> searchByText(@RequestParam String text,
+                                      @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
+                                      @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
         return itemService.getItemsByNameOrDescription(text, from, size);
     }
 
@@ -100,9 +100,9 @@ public class ItemController {
      */
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDTO createComment(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                    @PathVariable final Long itemId,
-                                    @Valid @RequestBody final CommentDTO commentDTO) {
+    public CommentDTO createComment(@RequestHeader(X_SHARER_USER_ID) Long userId,
+                                    @PathVariable Long itemId,
+                                    @Valid @RequestBody CommentDTO commentDTO) {
         return commentService.addComment(userId, itemId, commentDTO);
     }
 }

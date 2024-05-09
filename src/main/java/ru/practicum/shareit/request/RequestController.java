@@ -28,8 +28,8 @@ public class RequestController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RequestDTOResponse createRequest(@Valid @RequestBody final RequestDTO requestDTO,
-                                            @RequestHeader(X_SHARER_USER_ID) final Long userId) {
+    public RequestDTOResponse createRequest(@Valid @RequestBody  RequestDTO requestDTO,
+                                            @RequestHeader(X_SHARER_USER_ID)  Long userId) {
         return requestService.addRequestDTO(requestDTO, userId);
     }
 
@@ -40,9 +40,9 @@ public class RequestController {
      * @return a list of RequestDTOResponse objects
      */
     @GetMapping
-    public List<RequestDTOResponse> getRequests(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                                @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                                @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<RequestDTOResponse> getRequests(@RequestHeader(X_SHARER_USER_ID)  Long userId,
+                                                @Positive @RequestParam(defaultValue = INITIAL_X)  Integer from,
+                                                @Positive @RequestParam(defaultValue = LIMIT)  Integer size) {
         return requestService.getRequestsDTO(userId, from, size);
     }
 
@@ -55,9 +55,9 @@ public class RequestController {
      * @return A list of RequestDTOResponse objects.
      */
     @GetMapping("/all")
-    public List<RequestDTOResponse> getAllRequests(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                                   @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                                   @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public List<RequestDTOResponse> getAllRequests(@RequestHeader(X_SHARER_USER_ID)  Long userId,
+                                                   @Positive @RequestParam(defaultValue = INITIAL_X)  Integer from,
+                                                   @Positive @RequestParam(defaultValue = LIMIT)  Integer size) {
         return requestService.getAllRequestsPagableDTO(userId, from, size);
     }
 
@@ -69,10 +69,10 @@ public class RequestController {
      * @return the RequestDTOResponse object representing the request
      */
     @GetMapping("/{requestId}")
-    public RequestDTOResponse getRequest(@PathVariable final Long requestId,
-                                         @RequestHeader(X_SHARER_USER_ID) final Long userId,
-                                         @Positive @RequestParam(defaultValue = INITIAL_X) final Integer from,
-                                         @Positive @RequestParam(defaultValue = LIMIT) final Integer size) {
+    public RequestDTOResponse getRequest(@PathVariable  Long requestId,
+                                         @RequestHeader(X_SHARER_USER_ID)  Long userId,
+                                         @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
+                                         @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
         return requestService.getRequestById(requestId, userId, from, size);
     }
 }

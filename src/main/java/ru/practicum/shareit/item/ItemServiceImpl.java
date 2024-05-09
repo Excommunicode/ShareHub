@@ -120,7 +120,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
                 .collect(groupingBy(x -> x.getItem().getId(), toList()));
 
         List<ItemDTO> collect = items.stream()
-                .map(itemDTO -> updateItemDTOWithBookings(itemDTO, bookings.get(itemDTO.getId())))
+                .map(x -> updateItemDTOWithBookings(x, bookings.get(x.getId())))
                 .collect(toList());
         log.info("Number of items retrieved: {}", collect.size());
         return collect;

@@ -22,24 +22,6 @@ public class HandlerException {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> conflictValidException(final ConflictValidException e) {
-        log.warn("409 {}", e.getMessage());
-        return new ResponseEntity<>(ErrorResponse.builder()
-                .error("conflict valid")
-                .message(e.getMessage())
-                .build(), e.getHttpStatus());
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> validException(final ValidateException e) {
-        log.warn("400: {}", e.getMessage());
-        return new ResponseEntity<>(ErrorResponse.builder()
-                .error("Validation failed")
-                .message(e.getMessage())
-                .build(), e.getStatus());
-    }
-
-    @ExceptionHandler
     public ResponseEntity<ErrorResponse> badRequest(final BadRequestException e) {
         log.warn("400 {}", e.getMessage());
         return new ResponseEntity<>(ErrorResponse.builder()

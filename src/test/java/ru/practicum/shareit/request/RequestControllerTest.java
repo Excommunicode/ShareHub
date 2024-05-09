@@ -16,9 +16,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.practicum.shareit.item.ItemConstant.X_SHARER_USER_ID;
 
@@ -35,6 +38,8 @@ class RequestControllerTest {
 
     private User user;
     private RequestDTOResponse request;
+    private Long requestId = 1L;
+    private Long userId = 1L;
 
     @BeforeEach
     void setUp() {
@@ -47,6 +52,10 @@ class RequestControllerTest {
                 .description("Хотел бы воспользоваться щёткой для обуви")
                 .created(LocalDateTime.now())
                 .build();
+        when(requestService.addRequestDTO(any(RequestDTO.class), any(Long.class))).thenReturn(request);
+        when(requestService.getRequestById(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class)))
+                .thenReturn(request);
+        when(requestService.addRequestDTO(any(RequestDTO.class), any(Long.class))).thenReturn(request);
     }
 
 
@@ -67,16 +76,42 @@ class RequestControllerTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Retrieval of requests: should return the status 200 OK and expected list of requests")
     void getRequests() {
+        List<RequestDTOResponse> expectedRequests = Collections.singletonList(request);
+        when(requestService.getRequestsDTO(any(Long.class), any(Integer.class), any(Integer.class)))
+                .thenReturn(expectedRequests);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/requests")
+                        .header(X_SHARER_USER_ID, userId))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedRequests)));
     }
 
     @Test
     @SneakyThrows
+    @DisplayName("Retrieval of all requests: should return the status 200 OK and expected list of requests")
     void getAllRequests() {
+        List<RequestDTOResponse> expectedRequests = Collections.singletonList(request);
+        when(requestService.getAllRequestsPagableDTO(any(Long.class), any(Integer.class), any(Integer.class)))
+                .thenReturn(expectedRequests);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/requests/all")
+                        .header(X_SHARER_USER_ID, userId))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedRequests)));
     }
 
     @Test
     @SneakyThrows
+    @DisplayName("Retrieval of a specific request: should return the status 200 OK and expected request")
     void getRequest() {
+        when(requestService.getRequestById(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class)))
+                .thenReturn(request);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/requests/" + request.getId())
+                        .header(X_SHARER_USER_ID, userId))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(request)));
     }
 }
