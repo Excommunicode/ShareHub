@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.*;
 import ru.practicum.shareit.booking.BookingShortDTO;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDTO;
 
 import javax.validation.constraints.NotBlank;

@@ -49,7 +49,6 @@ public class ItemServiceImpl implements ItemService, CommentService {
         log.debug("Starting addItem operation for user ID: {}", userId);
 
         itemDTO.setOwner(findUserById(userId));
-
         ItemDTO savedItem = itemMapper.toDTO(itemRepository.save(itemMapper.toModel(itemDTO)));
 
         log.info("New item added with ID: {}", savedItem.getId());
