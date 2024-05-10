@@ -130,9 +130,8 @@ public class ItemServiceImpl implements ItemService, CommentService {
             return Collections.emptyList();
         }
 
-        String searchName = "%" + text.toLowerCase() + "%";
-        String searchDescription = "%" + text.toLowerCase() + "%";
-        List<ItemDTO> items = itemMapper.toListDTO(itemRepository.findByNameOrDescriptionAndAvailable(searchName, searchDescription, from, size));
+        String searchWord = "%" + text.toLowerCase() + "%";
+        List<ItemDTO> items = itemMapper.toListDTO(itemRepository.findByNameOrDescriptionAndAvailable(searchWord, searchWord, from, size));
 
         log.info("Number of items retrieved by name or description: {}", items.size());
         return items;
@@ -199,7 +198,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        BookingShortDTO lastBooking =bookingMapperShortDTO.toDTO (bookings.stream()
+        BookingShortDTO lastBooking = bookingMapperShortDTO.toDTO(bookings.stream()
                 .filter(booking -> booking.getStart().isBefore(now))
                 .max(Comparator.comparing(Booking::getEnd))
                 .orElse(null));
