@@ -78,14 +78,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * @return A list of bookings associated with the booker ID, ordered by start date in descending order,
      * with pagination applied (starting from the given start index and limiting the number of results to the given limit).
      */
+
     @Query(nativeQuery = true,
             value = "SELECT * " +
                     "FROM bookings b " +
                     "LEFT JOIN users u on u.id = b.booker_id " +
                     "WHERE u.id = :bookerId " +
                     "ORDER BY b.start_date DESC " +
-                    "OFFSET :start " +
-                    "LIMIT :limit")
+                    "LIMIT :limit " +
+                    "OFFSET :start ")
     List<Booking> findAllByBooker_Id(Long bookerId, Integer start, Integer limit);
 
     /**
@@ -145,8 +146,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "WHERE u.id = :userId " +
                     "AND b.end_date < :end " +
                     "ORDER BY b.id DESC " +
-                    "OFFSET :start " +
-                    "LIMIT :limit")
+                    "LIMIT :limit " +
+                    "OFFSET :start")
     List<Booking> findByBooker_IdAndEndIsBefore(Long userId, LocalDateTime end, Integer start, Integer limit);
 
     /**

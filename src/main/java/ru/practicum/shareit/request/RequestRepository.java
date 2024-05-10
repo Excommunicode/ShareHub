@@ -13,15 +13,6 @@ import java.util.List;
  * the RequestRepository interface provides additional methods for querying and retrieving Request entities in various ways.</p>
  */
 public interface RequestRepository extends JpaRepository<Request, Long> {
-
-    /**
-     * Returns a list of {@link Request} objects based on the ID of the requestor.
-     *
-     * @param id the ID of the requestor
-     * @return a list of {@link Request} objects that were created by the specified requestor
-     */
-    List<Request> findAllByRequestor_Id(Long id);
-
     /**
      * Finds all requests with the given requestor ID.
      *
