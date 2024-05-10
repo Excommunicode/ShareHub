@@ -13,6 +13,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserMapperImpl;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -39,6 +40,8 @@ class ItemServiceImplTest {
     private final CommentService commentService;
     private User createOwner;
     private Item createItem;
+    @Autowired
+    private UserMapperImpl userMapperImpl;
 
 
     @BeforeEach
@@ -137,7 +140,7 @@ class ItemServiceImplTest {
         assertThat(itemDTO.getName(), equalTo(resItemDto.getName()));
         assertThat(itemDTO.getDescription(), equalTo(resItemDto.getDescription()));
         assertThat(itemDTO.getAvailable(), equalTo(resItemDto.getAvailable()));
-        assertThat(itemDTO.getOwner(), equalTo(createOwner));
+        assertThat(itemDTO.getOwner(), equalTo(userMapperImpl.toDTO(createOwner)));
     }
 
     @Test

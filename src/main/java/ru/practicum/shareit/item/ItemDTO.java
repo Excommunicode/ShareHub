@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.*;
 import ru.practicum.shareit.booking.BookingShortDTO;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserDTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -31,7 +32,7 @@ public class ItemDTO {
     @NotNull(message = "Available cannot be null", groups = OnCreate.class)
     private Boolean available;
 
-    private User owner;
+    private UserDTO owner;
 
     private BookingShortDTO lastBooking;
 

@@ -48,9 +48,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
     public ItemDTO addItem(Long userId, ItemDTO itemDTO) {
         log.debug("Starting addItem operation for user ID: {}", userId);
 
-        findUserById(userId);
-
-        itemDTO.setOwner((userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"))));
+        itemDTO.setOwner(findUserById(userId));
 
         ItemDTO savedItem = itemMapper.toDTO(itemRepository.save(itemMapper.toModel(itemDTO)));
 
@@ -146,11 +144,11 @@ public class ItemServiceImpl implements ItemService, CommentService {
         log.debug("Adding a comment with id: {}", userId);
 
         UserDTO userDTO = findUserById(userId);
-        ItemDTO item = findItemById(itemId);
+        findItemById(itemId);
         validateComment(userId, itemId);
 
         commentDTO.setAuthorId(userDTO.getId());
-        commentDTO.setItemId(item.getId());
+        commentDTO.setItemId(itemId);
         commentDTO.setCreated(LocalDateTime.now());
 
         CommentDTO savedCommentDTO = commentMapper.toDTO(commentRepository.save(commentMapper.toModel(commentDTO)));

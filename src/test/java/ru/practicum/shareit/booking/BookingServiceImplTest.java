@@ -21,6 +21,7 @@ import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDTO;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ class BookingServiceImplTest {
     private final BookingRepository bookingRepository;
     private final ItemMapper itemMapper;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final ItemRepository itemRepository;
     private User user;
     private Booking booking;
@@ -84,7 +86,7 @@ class BookingServiceImplTest {
         itemDTO.setName("BookingItem");
         itemDTO.setDescription("BookingItemDescription");
         itemDTO.setAvailable(true);
-        itemDTO.setOwner(anotherUser);
+        itemDTO.setOwner(userMapper.toDTO(anotherUser));
         itemDTO.setRequestId(3L);
 
         item = new Item();
