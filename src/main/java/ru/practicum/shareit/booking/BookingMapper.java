@@ -17,6 +17,5 @@ public interface BookingMapper {
             @Mapping(source = "bookerId", target = "booker.id")})
     Booking toModel(BookingDTO bookingDTO);
 
-
     List<BookingDTOResponse> toDTOList(List<Booking> bookingList);
 }

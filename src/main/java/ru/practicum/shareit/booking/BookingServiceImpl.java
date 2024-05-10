@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.UnSupportedStatusException;
-import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemDTO;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserDTO;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -30,46 +32,29 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
 
     @Transactional
     @Override
     public BookingDTOResponse addBooking(BookingDTO bookingDTO, Long userId) {
         log.debug("Attempting to add a new booking for user ID: {}", userId);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> {
-            log.error("User not found with ID: {}", userId);
-            return new NotFoundException("User not found");
-        });
-        Item item = itemRepository.findById(bookingDTO.getItemId()).orElseThrow(() -> {
-            log.error("Item not found with ID: {}", bookingDTO.getItemId());
-            return new NotFoundException("Item not found");
-        });
+        UserDTO userDTO = findUserById(userId);
+        ItemDTO itemDTO = findItemById(bookingDTO.getItemId());
+        validateBooking(itemDTO, bookingDTO, userId);
 
-        if (!item.getAvailable()) {
-            log.warn("Attempted to book an unavailable item with ID: {}", bookingDTO.getItemId());
-            throw new BadRequestException("Item is not available");
-        }
+        bookingDTO.setStatus(WAITING);
+        bookingDTO.setBookerId(userId);
 
-        if (bookingDTO.getEnd().isBefore(bookingDTO.getStart()) || bookingDTO.getStart().equals(bookingDTO.getEnd())) {
-            log.warn("Invalid booking period from {} to {} for user ID: {}", bookingDTO.getStart(), bookingDTO.getEnd(), userId);
-            throw new BadRequestException("Booking period is invalid");
-        }
+        BookingDTOResponse bookingDTOResponse = bookingMapper.toDTO(bookingRepository.save(bookingMapper.toModel(bookingDTO)));
 
-        if (item.getOwner().getId().equals(userId)) {
-            log.warn("Booking attempt by item owner with user ID: {}", userId);
-            throw new NotFoundException("Owner cannot book own item");
-        }
+        bookingDTOResponse.setBooker(userDTO);
+        bookingDTOResponse.setItem(itemDTO);
 
-        Booking booking = bookingMapper.toModel(bookingDTO).toBuilder()
-                .booker(user)
-                .item(item)
-                .status(WAITING)
-                .build();
-
-        booking = bookingRepository.save(booking);
-        log.info("Booking successfully added with ID: {}", booking.getId());
-        return bookingMapper.toDTO(booking);
+        return bookingDTOResponse;
     }
 
     @Transactional
@@ -77,28 +62,14 @@ public class BookingServiceImpl implements BookingService {
     public BookingDTOResponse updateBooking(Long bookingId, Boolean approved, Long userId) {
         log.debug("Updating booking status for booking ID: {} by user ID: {}", bookingId, userId);
 
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> {
-            log.error("Booking not found with ID: {}", bookingId);
-            return new NotFoundException("Booking not found");
-        });
+        BookingDTOResponse bookingDTOResponse = findBookingById(bookingId);
+        validateWhereUpdate(bookingDTOResponse, approved, userId);
 
-        if (!booking.getItem().getOwner().getId().equals(userId)) {
-            log.error("Unauthorized access attempt by user ID: {} for booking ID: {}", userId, bookingId);
-            throw new NotFoundException("User not authorized");
-        }
+        bookingDTOResponse.setStatus(approved ? APPROVED : REJECTED);
+        bookingRepository.updateBookingsByStatus(bookingDTOResponse.getStatus().toString(), bookingId);
 
-        if (approved && booking.getStatus().equals(APPROVED)) {
-            log.warn("Redundant approval attempt for already approved booking ID: {}", bookingId);
-            throw new BadRequestException("Booking already approved");
-        }
-
-        booking.setStatus(approved ? APPROVED : REJECTED);
-
-        bookingRepository.updateBookingsByStatus(booking.getStatus().toString(), bookingId);
-
-
-        log.info("Booking status updated to {} for booking ID: {}", booking.getStatus(), bookingId);
-        return bookingMapper.toDTO(booking);
+        log.info("Booking status updated to {} for booking ID: {}", bookingDTOResponse.getStatus(), bookingId);
+        return bookingDTOResponse;
     }
 
 
@@ -199,6 +170,55 @@ public class BookingServiceImpl implements BookingService {
         return bookings;
     }
 
+    private void validateBooking(ItemDTO itemDTO, BookingDTO bookingDTO, Long userId) {
+        if (!itemDTO.getAvailable()) {
+            log.warn("Attempted to book an unavailable item with ID: {}", bookingDTO.getItemId());
+            throw new BadRequestException("Item is not available");
+        }
+
+        if (bookingDTO.getEnd().isBefore(bookingDTO.getStart()) || bookingDTO.getStart().equals(bookingDTO.getEnd())) {
+            log.warn("Invalid booking period from {} to {} for user ID: {}", bookingDTO.getStart(), bookingDTO.getEnd(), userId);
+            throw new BadRequestException("Booking period is invalid");
+        }
+
+        if (itemDTO.getOwner().getId().equals(userId)) {
+            log.warn("Booking attempt by item owner with user ID: {}", userId);
+            throw new NotFoundException("Owner cannot book own item");
+        }
+    }
+
+    private UserDTO findUserById(Long userId) {
+        return userMapper.toDTO(userRepository.findById(userId).orElseThrow(() -> {
+            log.error("User not found with ID: {}", userId);
+            return new NotFoundException("User not found");
+        }));
+    }
+
+    private ItemDTO findItemById(Long itemId) {
+        return itemMapper.toDTO(itemRepository.findById(itemId).orElseThrow(() -> {
+            log.error("Item not found with ID: {}", itemId);
+            return new NotFoundException("Item not found");
+        }));
+    }
+
+    private void validateWhereUpdate(BookingDTOResponse bookingDTOResponse, Boolean approved, Long userId) {
+        if (!bookingDTOResponse.getItem().getOwner().getId().equals(userId)) {
+            log.error("Unauthorized access attempt by user ID: {} for booking ID: {}", userId, bookingDTOResponse.getId());
+            throw new NotFoundException("User not authorized");
+        }
+
+        if (approved && bookingDTOResponse.getStatus().equals(APPROVED)) {
+            log.warn("Redundant approval attempt for already approved booking ID: {}", bookingDTOResponse.getId());
+            throw new BadRequestException("Booking already approved");
+        }
+    }
+
+    private BookingDTOResponse findBookingById(Long bookingId) {
+        return bookingMapper.toDTO(bookingRepository.findById(bookingId).orElseThrow(() -> {
+            log.error("Booking not found with ID: {}", bookingId);
+            return new NotFoundException("Booking not found");
+        }));
+    }
 
     private void verifyUser(Long userId) {
         log.debug("Verifying existence of user with ID: {}", userId);

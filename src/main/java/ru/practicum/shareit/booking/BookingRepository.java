@@ -86,7 +86,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "WHERE u.id = :bookerId " +
                     "ORDER BY b.start_date DESC " +
                     "LIMIT :limit " +
-                    "OFFSET :start ")
+                    "OFFSET :start")
     List<Booking> findAllByBooker_Id(Long bookerId, Integer start, Integer limit);
 
     /**
