@@ -79,11 +79,9 @@ public class ItemServiceImpl implements ItemService, CommentService {
         log.debug("Attempting to find item by ID: {} for user ID: {}", itemId, userId);
 
         LocalDateTime now = LocalDateTime.now();
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
-        log.debug("Item found with ID: {}. Proceeding with data assembly.", itemId);
 
-        ItemDTO responseItem = itemMapper.toDTO(item);
+        ItemDTO responseItem = findItemById(itemId);
+        
         List<CommentDTO> comments = commentMapper.toDTOList(commentRepository.findByItem_IdOrderByCreatedDesc(itemId));
         log.debug("Number of comments loaded: {}", comments.size());
 
@@ -122,6 +120,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
         List<ItemDTO> collect = items.stream()
                 .map(x -> updateItemDTOWithBookings(x, bookings.get(x.getId())))
                 .collect(toList());
+
         log.info("Number of items retrieved: {}", collect.size());
         return collect;
     }
@@ -134,9 +133,11 @@ public class ItemServiceImpl implements ItemService, CommentService {
             log.info("Search text is empty or null. Returning empty list.");
             return Collections.emptyList();
         }
-        Pageable pageable = PageRequest.of(from, size);
 
+        Pageable pageable = PageRequest.of(from, size);
         List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text, pageable);
+
+        log.info("Number of items retrieved by name or description: {}", items.size());
         return itemMapper.toListDTO(items);
     }
 
