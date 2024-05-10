@@ -4,8 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 /**
  * The RequestRepository interface extends the JpaRepository interface and provides methods for accessing and manipulating {@link Request} entities in the database.
  *
