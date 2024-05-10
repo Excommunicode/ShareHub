@@ -65,10 +65,10 @@ public class ItemServiceImpl implements ItemService, CommentService {
         verifyOwnership(userId, item);
 
         mapItemDetails(item, itemDTO);
-        ItemDTO updatedItemDTO = itemMapper.toDTO(itemRepository.save(item));
-
+        Item updatedItem = itemRepository.save(item);
         log.info("Item ID: {} updated by user ID: {}", itemId, userId);
-        return updatedItemDTO;
+
+        return itemMapper.toDTO(updatedItem);
     }
 
     @Override
@@ -130,11 +130,11 @@ public class ItemServiceImpl implements ItemService, CommentService {
             return Collections.emptyList();
         }
 
-        String searchWord = "%" + text.toLowerCase() + "%";
-        List<ItemDTO> items = itemMapper.toListDTO(itemRepository.findByNameOrDescriptionAndAvailable(searchWord, searchWord, from, size));
+        Pageable pageable = PageRequest.of(from, size);
+        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text, pageable);
 
         log.info("Number of items retrieved by name or description: {}", items.size());
-        return items;
+        return itemMapper.toListDTO(items);
     }
 
     @Transactional
@@ -198,23 +198,23 @@ public class ItemServiceImpl implements ItemService, CommentService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        BookingShortDTO lastBooking = bookingMapperShortDTO.toDTO(bookings.stream()
+        Booking lastBooking = (bookings.stream()
                 .filter(booking -> booking.getStart().isBefore(now))
                 .max(Comparator.comparing(Booking::getEnd))
                 .orElse(null));
 
-        BookingShortDTO nextBooking = bookingMapperShortDTO.toDTO(bookings.stream()
+        Booking nextBooking = bookings.stream()
                 .filter(booking -> booking.getStart().isAfter(now))
                 .min(Comparator.comparing(Booking::getStart))
-                .orElse(null));
+                .orElse(null);
 
 
         if (lastBooking != null) {
-            itemDTO.setLastBooking(lastBooking);
+            itemDTO.setLastBooking(bookingMapperShortDTO.toDTO(lastBooking));
         }
 
         if (lastBooking != null) {
-            itemDTO.setNextBooking(nextBooking);
+            itemDTO.setNextBooking(bookingMapperShortDTO.toDTO(nextBooking));
         }
         return itemDTO;
     }

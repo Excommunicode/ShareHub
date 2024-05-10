@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 
@@ -97,16 +96,16 @@ public class ItemRepositoryTest {
     @Test
     void findByNameOrDescriptionTest() {
         String armature = "Armature";
-        when(itemRepository.findByNameOrDescriptionAndAvailable(
-                any(String.class), any(String.class), anyInt(), anyInt())).thenReturn(Arrays.asList(item1, item2));
+        when(itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(
+                any(String.class), any(String.class), any(Pageable.class))).thenReturn(Arrays.asList(item1, item2));
 
         testEntityManager.persist(testUser);
         testEntityManager.persist(request);
         testEntityManager.persist(item1);
         testEntityManager.persist(item2);
         testEntityManager.flush();
-        List<Item> items = itemRepository.findByNameOrDescriptionAndAvailable(
-                armature, armature, anyInt(), anyInt());
+        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(
+                armature, armature, PAGEABLE);
 
         assertThat(items)
                 .isNotNull()

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -186,7 +187,7 @@ class ItemServiceImplTest {
     @Test
     void getItemsByNameOrDescriptionTest() {
         String string = "Аккум";
-        List<Item> items = itemRepository.findByNameOrDescriptionAndAvailable(string, string, 0, 20);
+        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(string, string, PageRequest.of(0, 20));
         if (items.isEmpty()) {
             fail("No items found for testing");
         }
@@ -202,7 +203,7 @@ class ItemServiceImplTest {
     @Test
     void getItemsByEmptyNameOrDescriptionTest() {
         String string = "Аккум";
-        List<Item> items = itemRepository.findByNameOrDescriptionAndAvailable(string, string, 0, 20);
+        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(string, string, PageRequest.of(0, 20));
         if (items.isEmpty()) {
             fail("No items found for testing");
         }
