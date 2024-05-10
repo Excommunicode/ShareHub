@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
     public ItemDTO addItem(Long userId, ItemDTO itemDTO) {
         log.debug("Starting addItem operation for user ID: {}", userId);
 
-        verifyUserExists(userId);
+        findUserById(userId);
 
         itemDTO.setOwner((userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"))));
 
@@ -63,8 +63,8 @@ public class ItemServiceImpl implements ItemService, CommentService {
     public ItemDTO updateItem(Long userId, Long itemId, ItemDTO itemDTO) {
         log.debug("Starting updateItem operation for item ID: {} by user ID: {}", itemId, userId);
 
-        verifyUserExists(userId);
-        Item item = getItemById(itemId);
+        findUserById(userId);
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found"));
         verifyOwnership(userId, item);
 
         mapItemDetails(item, itemDTO);
@@ -145,13 +145,8 @@ public class ItemServiceImpl implements ItemService, CommentService {
     public CommentDTO addComment(Long userId, Long itemId, CommentDTO commentDTO) {
         log.info("Adding a comment with id: {}", userId);
 
-        if (commentDTO.getText() == null || commentDTO.getText().trim().isEmpty()) {
-            throw new BadRequestException("Comment text cannot be empty");
-        }
-
-        UserDTO user = userMapper.toDTO(userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId)));
-        ItemDTO item = itemMapper.toDTO(getItemById(itemId));
+        UserDTO userDTO = findUserById(userId);
+        ItemDTO item = findItemById(itemId);
 
         if (!bookingRepository.existsByBookerIdAndItem_IdAndStatusInAndEndBefore(userId, itemId,
                 List.of(APPROVED, CANCELED), LocalDateTime.now())) {
@@ -159,7 +154,7 @@ public class ItemServiceImpl implements ItemService, CommentService {
         }
 
         Comment savedComment = commentMapper.toModel(commentDTO).toBuilder()
-                .author(userMapper.toModel(user))
+                .author(userMapper.toModel(userDTO))
                 .created(LocalDateTime.now())
                 .item(itemMapper.toModel(item))
                 .build();
@@ -169,21 +164,20 @@ public class ItemServiceImpl implements ItemService, CommentService {
         return savedCommentDTO;
     }
 
-    private void verifyUserExists(Long userId) {
-        log.debug("Verifying  of user with ID: {}", userId);
-
-        if (!userRepository.existsById(userId)) {
-            log.error("User not found with ID: {}", userId);
-            throw new NotFoundException("User does not exist.");
-        }
-    }
-
-    private Item getItemById(Long itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() -> {
+    private ItemDTO findItemById(Long itemId) {
+        return itemMapper.toDTO(itemRepository.findById(itemId).orElseThrow(() -> {
             log.error("Item not found with ID: {}", itemId);
             return new NotFoundException("Item not found.");
-        });
+        }));
     }
+
+    private UserDTO findUserById(Long userId) {
+        return userMapper.toDTO(userRepository.findById(userId).orElseThrow(() -> {
+            log.error("User not found with ID: {}", userId);
+            return new NotFoundException("User not found");
+        }));
+    }
+
 
     private void verifyOwnership(Long userId, Item item) {
         if (!item.getOwner().getId().equals(userId)) {

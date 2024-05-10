@@ -54,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
         bookingDTOResponse.setBooker(userDTO);
         bookingDTOResponse.setItem(itemDTO);
 
+        log.info("Successfully added a new booking for user ID: {}", userId);
         return bookingDTOResponse;
     }
 
@@ -77,8 +78,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingDTOResponse getBooking(Long bookingId, Long userId) {
         log.debug("Fetching booking with ID: {} for user ID: {}", bookingId, userId);
 
-        BookingDTOResponse dto = bookingMapper.toDTO(bookingRepository
-                .getBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(bookingId, userId, bookingId, userId)
+        BookingDTOResponse dto = bookingMapper.toDTO(
+                bookingRepository.getBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(bookingId, userId, bookingId, userId)
                 .orElseThrow(() -> new NotFoundException("Booking not found")));
 
         log.info("Booking retrieved successfully for booking ID: {}", bookingId);
@@ -89,7 +90,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDTOResponse> getBookings(Long userId, BookingState state, Integer from, Integer size) {
         log.debug("Retrieving bookings for user ID: {} with state: {}", userId, state);
 
-        verifyUser(userId);
+        findUserById(userId);
+
         List<BookingDTOResponse> bookings;
         LocalDateTime now = LocalDateTime.now();
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
@@ -131,7 +133,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDTOResponse> getOwnerBookings(Long userId, BookingState state, Integer from, Integer size) {
         log.debug("Retrieving owner bookings for user ID: {} with state: {}", userId, state);
-        verifyUser(userId);
+
+        findUserById(userId);
+
         LocalDateTime now = LocalDateTime.now();
         List<BookingDTOResponse> bookings;
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
@@ -218,16 +222,5 @@ public class BookingServiceImpl implements BookingService {
             log.error("Booking not found with ID: {}", bookingId);
             return new NotFoundException("Booking not found");
         }));
-    }
-
-    private void verifyUser(Long userId) {
-        log.debug("Verifying existence of user with ID: {}", userId);
-
-        if (!userRepository.existsById(userId)) {
-            log.error("User verification failed for user ID: {}", userId);
-            throw new NotFoundException("User not found");
-        }
-
-        log.info("User verified successfully with user ID: {}", userId);
     }
 }
