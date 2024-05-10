@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -22,7 +23,15 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      * @param description The description to search for. Can be partial or case-insensitive.
      * @return A list of items matching the search criteria.
      */
-    List<Item> findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(String name, String description, Pageable pageable);
+    @Query(nativeQuery = true,
+            value = "SELECT i.* " +
+                    "FROM items i " +
+                    "WHERE LOWER(i.name) LIKE :name " +
+                    "OR LOWER(i.description) LIKE :description " +
+                    "AND i.is_available = true " +
+                    "LIMIT :limit " +
+                    "OFFSET :offset")
+    List<Item> findByNameOrDescriptionAndAvailable(String name, String description, Integer offset, Integer limit);
 
     /**
      * Retrieves all items by request ID.

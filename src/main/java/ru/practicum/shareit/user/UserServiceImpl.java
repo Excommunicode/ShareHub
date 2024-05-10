@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         log.debug("Updating user with ID: {}", id);
 
-        User existingUser = findUserById(id);
+        User existingUser = (findUserById(id));
         updateUserInfoFromDTO(existingUser, userDTO);
         repository.save(existingUser);
 
@@ -69,10 +69,10 @@ public class UserServiceImpl implements UserService {
     public UserDTO getById(Long id) {
         log.debug("Retrieving user with ID: {}", id);
 
-        User user = findUserById(id);
+        UserDTO userDTO = mapper.toDTO(findUserById(id));
 
         log.info("User retrieved with ID: {}", id);
-        return mapper.toDTO(user);
+        return userDTO;
     }
 
     @Override

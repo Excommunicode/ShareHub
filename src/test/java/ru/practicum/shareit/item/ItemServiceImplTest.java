@@ -187,7 +187,7 @@ class ItemServiceImplTest {
     @Test
     void getItemsByNameOrDescriptionTest() {
         String string = "Аккум";
-        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(string, string, PageRequest.of(0, 20));
+        List<Item> items = itemRepository.findByNameOrDescriptionAndAvailable(string, string, 0, 20);
         if (items.isEmpty()) {
             fail("No items found for testing");
         }
@@ -203,7 +203,7 @@ class ItemServiceImplTest {
     @Test
     void getItemsByEmptyNameOrDescriptionTest() {
         String string = "Аккум";
-        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(string, string, PageRequest.of(0, 20));
+        List<Item> items = itemRepository.findByNameOrDescriptionAndAvailable(string, string, 0, 20);
         if (items.isEmpty()) {
             fail("No items found for testing");
         }

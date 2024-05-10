@@ -31,8 +31,8 @@ public class ItemController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDTO createItem(@RequestHeader(X_SHARER_USER_ID) final Long userId,
-                              @Validated(OnCreate.class) @RequestBody final ItemDTO itemDTO) {
+    public ItemDTO createItem(@RequestHeader(X_SHARER_USER_ID)  Long userId,
+                              @Validated(OnCreate.class) @RequestBody  ItemDTO itemDTO) {
         return itemService.addItem(userId, itemDTO);
     }
 
@@ -60,7 +60,7 @@ public class ItemController {
      * @return the requested item, encapsulated in a {@link ItemDTO}
      */
     @GetMapping("/{itemId}")
-    public ItemDTO getById(@PathVariable final Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
+    public ItemDTO getById(@PathVariable  Long itemId, @RequestHeader(X_SHARER_USER_ID) Long userId) {
         return itemService.findItemById(itemId, userId);
     }
 

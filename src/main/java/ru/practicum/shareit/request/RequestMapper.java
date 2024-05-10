@@ -4,9 +4,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-import static ru.practicum.shareit.utils.Constant.SPRING;
-
-@Mapper(componentModel = SPRING)
+@Mapper(componentModel = "spring")
 public interface RequestMapper {
 
     RequestDTO toDTO(Request user);

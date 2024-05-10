@@ -206,6 +206,13 @@ public class BookingServiceImpl implements BookingService {
         }));
     }
 
+    private BookingDTOResponse findBookingById(Long bookingId) {
+        return bookingMapper.toDTO(bookingRepository.findById(bookingId).orElseThrow(() -> {
+            log.error("Booking not found with ID: {}", bookingId);
+            return new NotFoundException("Booking not found");
+        }));
+    }
+
     private void validateWhereUpdate(BookingDTOResponse bookingDTOResponse, Boolean approved, Long userId) {
         if (!bookingDTOResponse.getItem().getOwner().getId().equals(userId)) {
             log.error("Unauthorized access attempt by user ID: {} for booking ID: {}", userId, bookingDTOResponse.getId());
@@ -216,12 +223,5 @@ public class BookingServiceImpl implements BookingService {
             log.warn("Redundant approval attempt for already approved booking ID: {}", bookingDTOResponse.getId());
             throw new BadRequestException("Booking already approved");
         }
-    }
-
-    private BookingDTOResponse findBookingById(Long bookingId) {
-        return bookingMapper.toDTO(bookingRepository.findById(bookingId).orElseThrow(() -> {
-            log.error("Booking not found with ID: {}", bookingId);
-            return new NotFoundException("Booking not found");
-        }));
     }
 }

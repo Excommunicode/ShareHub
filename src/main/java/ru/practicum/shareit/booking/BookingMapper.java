@@ -6,9 +6,7 @@ import org.mapstruct.Mappings;
 
 import java.util.List;
 
-import static ru.practicum.shareit.utils.Constant.SPRING;
-
-@Mapper(componentModel = SPRING)
+@Mapper(componentModel = "spring")
 public interface BookingMapper {
 
     BookingDTOResponse toDTO(Booking booking);
