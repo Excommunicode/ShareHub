@@ -79,9 +79,8 @@ public class ItemServiceImpl implements ItemService, CommentService {
         log.debug("Attempting to find item by ID: {} for user ID: {}", itemId, userId);
 
         LocalDateTime now = LocalDateTime.now();
-
         ItemDTO responseItem = findItemById(itemId);
-        
+
         List<CommentDTO> comments = commentMapper.toDTOList(commentRepository.findByItem_IdOrderByCreatedDesc(itemId));
         log.debug("Number of comments loaded: {}", comments.size());
 

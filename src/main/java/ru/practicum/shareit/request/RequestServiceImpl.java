@@ -61,9 +61,7 @@ public class RequestServiceImpl implements RequestService {
         List<RequestDTOResponse> dtoList = requestMapperResponse.toDTOList(requestRepository.findAllByRequestor_Id(userId, pageable).getContent());
         List<ItemDTO> listDTO = itemMapper.toListDTO(itemRepository.findAllByRequestId(userId, pageable));
 
-        List<RequestDTOResponse> collect = dtoList.stream()
-                .peek(x -> x.setItems(listDTO != null ? listDTO : Collections.emptyList()))
-                .collect(Collectors.toList());
+        List<RequestDTOResponse> collect = getListRequestDTOWithItems(dtoList, listDTO);
 
         log.info("Returning {} request(s) for user ID: {}", dtoList.size(), userId);
         return collect;
@@ -84,9 +82,7 @@ public class RequestServiceImpl implements RequestService {
 
         List<ItemDTO> allByOwnerId = itemMapper.toListDTO(itemRepository.findAllByOwner_IdAndRequestId(userId, first));
 
-        List<RequestDTOResponse> collect = list.stream()
-                .peek(x -> x.setItems(allByOwnerId != null ? allByOwnerId : Collections.emptyList()))
-                .collect(Collectors.toList());
+        List<RequestDTOResponse> collect = getListRequestDTOWithItems(list, allByOwnerId);
 
         log.info("Returning {} request(s) for user id: {}", list.size(), userId);
         return collect;
@@ -116,5 +112,11 @@ public class RequestServiceImpl implements RequestService {
             log.error("User with id: {} not found", userId);
             return new NotFoundException("User not found with id: " + userId);
         }));
+    }
+
+    private List<RequestDTOResponse> getListRequestDTOWithItems(List<RequestDTOResponse> dtoList, List<ItemDTO> itemDTOS) {
+        return dtoList.stream()
+                .peek(x -> x.setItems(itemDTOS != null ? itemDTOS : Collections.emptyList()))
+                .collect(Collectors.toList());
     }
 }
