@@ -39,8 +39,8 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDTOResponse addRequestDTO(RequestDTO requestDTO, Long userId) {
         log.debug("Attempting to add request for user with id: {}", userId);
+
         UserDTO userDTO = findUserDTO(userId);
-        log.debug("User found: {}", userDTO);
 
         requestDTO.setRequestor(userMapper.toModel(userDTO));
         requestDTO.setCreated(LocalDateTime.now());

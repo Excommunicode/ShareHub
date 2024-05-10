@@ -94,8 +94,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isExistUser(final Long id) {
-        final boolean exists = repository.existsById(id);
+    public boolean isExistUser(Long id) {
+        boolean exists = repository.existsById(id);
 
         log.debug("User existence check for ID: {} - Exists: {}", id, exists);
         return exists;

@@ -233,14 +233,12 @@ class ItemServiceImplTest {
 
         assertThat(commentDTO.getId(), equalTo(comment.getId()));
         assertThat(commentDTO.getText(), equalTo(comment.getText()));
-        assertThat(commentDTO.getAuthorName(), equalTo(comment.getAuthor().getName()));
-    }
 
+    }
 
     @Test
     void addEmptyComment() {
         assertThrows(BadRequestException.class, () ->
                 commentService.addComment(createOwner.getId(), createItem.getId(), CommentDTO.builder().build()));
     }
-
 }

@@ -17,7 +17,8 @@ public interface CommentMapper {
      * @return The CommentDTO object
      */
     @Mappings({@Mapping(source = "author.id", target = "authorId"),
-            @Mapping(source = "author.name", target = "authorName")})
+            @Mapping(source = "author.name", target = "authorName"),
+            @Mapping(source = "item.id", target = "itemId")})
     CommentDTO toDTO(Comment comment);
 
     /**
@@ -27,7 +28,8 @@ public interface CommentMapper {
      * @return The converted Comment object.
      */
     @Mappings({@Mapping(source = "authorId", target = "author.id"),
-            @Mapping(source = "authorName", target = "author.name")})
+            @Mapping(source = "authorName", target = "author.name"),
+            @Mapping(source = "itemId", target = "item.id")})
     Comment toModel(CommentDTO commentDTO);
 
     /**

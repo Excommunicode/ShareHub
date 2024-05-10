@@ -80,7 +80,7 @@ public class BookingServiceImpl implements BookingService {
 
         BookingDTOResponse dto = bookingMapper.toDTO(
                 bookingRepository.getBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(bookingId, userId, bookingId, userId)
-                .orElseThrow(() -> new NotFoundException("Booking not found")));
+                        .orElseThrow(() -> new NotFoundException("Booking not found")));
 
         log.info("Booking retrieved successfully for booking ID: {}", bookingId);
         return dto;
@@ -96,6 +96,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime now = LocalDateTime.now();
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = PageRequest.of(from, size, sort);
+
         switch (state) {
             case ALL:
                 bookings = bookingMapper.toDTOList(
@@ -140,6 +141,7 @@ public class BookingServiceImpl implements BookingService {
         List<BookingDTOResponse> bookings;
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(from, size, sort);
+
         switch (state) {
             case ALL:
                 bookings = bookingMapper.toDTOList(
@@ -168,7 +170,6 @@ public class BookingServiceImpl implements BookingService {
             default:
                 log.error("Unknown booking state request: {}", state);
                 throw new UnSupportedStatusException("Unknown state: " + state);
-
         }
         log.info("Found {} owner bookings for user Id: {} with state: {}", bookings.size(), userId, state);
         return bookings;

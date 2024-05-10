@@ -143,23 +143,19 @@ public class ItemServiceImpl implements ItemService, CommentService {
     @Transactional
     @Override
     public CommentDTO addComment(Long userId, Long itemId, CommentDTO commentDTO) {
-        log.info("Adding a comment with id: {}", userId);
+        log.debug("Adding a comment with id: {}", userId);
 
         UserDTO userDTO = findUserById(userId);
         ItemDTO item = findItemById(itemId);
+        validateComment(userId, itemId);
 
-        if (!bookingRepository.existsByBookerIdAndItem_IdAndStatusInAndEndBefore(userId, itemId,
-                List.of(APPROVED, CANCELED), LocalDateTime.now())) {
-            throw new BadRequestException("Booking already in progress");
-        }
+        commentDTO.setAuthorId(userDTO.getId());
+        commentDTO.setItemId(item.getId());
+        commentDTO.setCreated(LocalDateTime.now());
 
-        Comment savedComment = commentMapper.toModel(commentDTO).toBuilder()
-                .author(userMapper.toModel(userDTO))
-                .created(LocalDateTime.now())
-                .item(itemMapper.toModel(item))
-                .build();
+        CommentDTO savedCommentDTO = commentMapper.toDTO(commentRepository.save(commentMapper.toModel(commentDTO)));
+        savedCommentDTO.setAuthorName(userDTO.getName());
 
-        CommentDTO savedCommentDTO = commentMapper.toDTO(commentRepository.save(savedComment));
         log.info("New comment added with ID: {}", savedCommentDTO.getId());
         return savedCommentDTO;
     }
@@ -224,5 +220,12 @@ public class ItemServiceImpl implements ItemService, CommentService {
             itemDTO.setNextBooking(bookingMapperShortDTO.toDTO(nextBooking));
         }
         return itemDTO;
+    }
+
+    private void validateComment(Long userId, Long itemId) {
+        if (!bookingRepository.existsByBookerIdAndItem_IdAndStatusInAndEndBefore(userId, itemId,
+                List.of(APPROVED, CANCELED), LocalDateTime.now())) {
+            throw new BadRequestException("Booking already in progress");
+        }
     }
 }

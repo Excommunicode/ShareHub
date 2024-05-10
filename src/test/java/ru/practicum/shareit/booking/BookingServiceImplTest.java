@@ -211,15 +211,6 @@ class BookingServiceImplTest {
     }
 
 
-//    @Test
-//    void updateBookingWhenAlreadyApprovedThrowsException() {
-//        Booking approvedBooking = booking.toBuilder()
-//                .status(APPROVED)
-//                .build();
-//        when(bookingRepositoryMock.findById(booking.getId())).thenReturn(Optional.of(approvedBooking));
-//
-//        assertThrows(BadRequestException.class, () -> bookingService.updateBooking(booking.getId(), true, booking.getItem().getOwner().getId()));
-//    }
 
     @Test
     void updateBookingWhenRejected() {
@@ -231,15 +222,7 @@ class BookingServiceImplTest {
         assertDoesNotThrow(() -> bookingService.updateBooking(rejectedBooking.getId(), false, rejectedBooking.getItem().getOwner().getId()));
     }
 
-//    @Test
-//    void updateBookingWhenApproved() {
-//        Booking approvedBooking = booking.toBuilder().status(WAITING).build();
-//        when(bookingRepositoryMock.findById(approvedBooking.getId())).thenReturn(Optional.of(approvedBooking));
-//        when(bookingRepositoryMock.save(approvedBooking)).thenReturn(approvedBooking);
-//        when(bookingMapperMock.toDTO(booking)).thenReturn(bookingDTOResponse);
-//
-//        assertDoesNotThrow(() -> bookingService.updateBooking(approvedBooking.getId(), true, approvedBooking.getItem().getOwner().getId()));
-//    }
+
 
     @Test
     void updateBookingWithNotId() {
