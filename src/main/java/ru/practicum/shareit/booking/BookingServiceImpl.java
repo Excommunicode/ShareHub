@@ -167,7 +167,6 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = PageRequest.of(from, size, sort);
         switch (state) {
             case ALL:
-                log.debug("!!!!!!!!!!!");
                 bookings = bookingMapper.toDTOList(
                         bookingRepository.getBookingByItem_Owner_Id(userId, pageable));
                 break;
