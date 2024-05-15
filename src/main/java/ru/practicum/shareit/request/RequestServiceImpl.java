@@ -45,7 +45,6 @@ public class RequestServiceImpl implements RequestService {
         requestDTO.setRequestor(userMapper.toModel(userDTO));
         requestDTO.setCreated(LocalDateTime.now());
         RequestDTOResponse responseDTO = requestMapperResponse.toDTO(requestRepository.save(requestMapper.toModel(requestDTO)));
-        log.info("Request saved for user id: {}", userId);
 
         log.info("RequestDTOResponse created with created date set to now: {}", responseDTO);
         return responseDTO;
@@ -72,8 +71,7 @@ public class RequestServiceImpl implements RequestService {
         log.debug("Fetching requests for user ID: {} from page {} with size {}", userId, from, size);
 
         Pageable pageable = PageRequest.of(from, size);
-        List<RequestDTOResponse> list = requestMapperResponse.toDTOList(requestRepository.findAllByRequestor_IdNot(userId,
-                pageable).getContent());
+        List<RequestDTOResponse> list = requestMapperResponse.toDTOList(requestRepository.findAllByRequestor_IdNot(userId, pageable).getContent());
 
         Long first = list.stream()
                 .map(RequestDTOResponse::getId)

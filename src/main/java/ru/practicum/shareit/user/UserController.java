@@ -43,7 +43,7 @@ public class UserController {
      * @param userDTO the updated user information
      * @return the updated user
      */
-    @PatchMapping("/{userId}")
+        @PatchMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO updateUser(@PathVariable Long userId,
                               @Validated(OnUpdate.class) @RequestBody UserDTO userDTO) {

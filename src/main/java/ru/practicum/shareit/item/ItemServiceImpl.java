@@ -28,6 +28,7 @@ import static org.springframework.transaction.annotation.Isolation.REPEATABLE_RE
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 import static ru.practicum.shareit.booking.BookingState.*;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -130,11 +131,10 @@ public class ItemServiceImpl implements ItemService, CommentService {
             return Collections.emptyList();
         }
 
-        Pageable pageable = PageRequest.of(from, size);
-        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text, pageable);
-
+        String searchWord = "%" + text.toLowerCase() + "%";
+        List<ItemDTO> items = itemMapper.toListDTO(itemRepository.findByNameOrDescriptionAndAvailable(searchWord, searchWord, from, size));
         log.info("Number of items retrieved by name or description: {}", items.size());
-        return itemMapper.toListDTO(items);
+        return items;
     }
 
     @Transactional

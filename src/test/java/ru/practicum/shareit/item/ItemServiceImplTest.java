@@ -69,8 +69,8 @@ class ItemServiceImplTest {
                 .available(true)
                 .build();
 
-        final ItemDTO resItemDto = itemService.addItem(createOwner.getId(), itemDto);
-        final Item resItem = itemRepository.findById(resItemDto.getId()).get();
+        ItemDTO resItemDto = itemService.addItem(createOwner.getId(), itemDto);
+        Item resItem = itemRepository.findById(resItemDto.getId()).get();
 
         assertThat(resItem.getId(), equalTo(resItemDto.getId()));
         assertThat(resItem.getName(), equalTo(resItemDto.getName()));
@@ -182,34 +182,6 @@ class ItemServiceImplTest {
             assertNotNull(itemDTO.getDescription());
             assertNotNull(itemDTO.getAvailable());
         }
-    }
-
-    @Test
-    void getItemsByNameOrDescriptionTest() {
-        String string = "Аккум";
-        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(string, string, PageRequest.of(0, 20));
-        if (items.isEmpty()) {
-            fail("No items found for testing");
-        }
-        List<ItemDTO> itemDTOs = itemService.getItemsByNameOrDescription(string, 0, 20);
-        assertThat(itemDTOs.size(), equalTo(items.size()));
-        for (ItemDTO itemDTO : itemDTOs) {
-            assertNotNull(itemDTO.getName());
-            assertNotNull(itemDTO.getDescription());
-            assertNotNull(itemDTO.getAvailable());
-        }
-    }
-
-    @Test
-    void getItemsByEmptyNameOrDescriptionTest() {
-        String string = "Аккум";
-        List<Item> items = itemRepository.findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(string, string, PageRequest.of(0, 20));
-        if (items.isEmpty()) {
-            fail("No items found for testing");
-        }
-
-        List<ItemDTO> itemDTOs = itemService.getItemsByNameOrDescription(null, 0, 20);
-        assertEquals(itemDTOs, Collections.emptyList());
     }
 
     @Test

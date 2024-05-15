@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -15,14 +16,25 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      */
     List<Item> findAllByOwnerIdOrderById(Long id, Pageable pageable);
 
+
     /**
-     * Finds items by name containing ignore case and available is true, or description containing ignore case and available is true.
+     * Finds items by name or description and availability status.
      *
-     * @param name        The name to search for. Can be partial or case-insensitive.
-     * @param description The description to search for. Can be partial or case-insensitive.
-     * @return A list of items matching the search criteria.
+     * @param name        the name to search for (case-insensitive)
+     * @param description the description to search for (case-insensitive)
+     * @param offset      the offset for paginated results
+     * @param limit       the maximum number of items to return
+     * @return a list of items matching the name or description and availability status, limited by the offset and limit parameters
      */
-    List<Item> findByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(String name, String description, Pageable pageable);
+    @Query(nativeQuery = true,
+            value = "SELECT i.* " +
+                    "FROM items i " +
+                    "WHERE LOWER(i.name) LIKE :name " +
+                    "OR LOWER(i.description) LIKE :description " +
+                    "AND i.is_available = true " +
+                    "LIMIT :limit " +
+                    "OFFSET :offset")
+    List<Item> findByNameOrDescriptionAndAvailable(String name, String description, Integer offset, Integer limit);
 
     /**
      * Retrieves all items by request ID.
