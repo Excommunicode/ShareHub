@@ -41,13 +41,5 @@ public class RequestClient extends BaseClient {
         String url = String.format("/%d", requestId);
         return get(url, userId);
     }
-    /*
-@GetMapping("/{requestId}")
-    public RequestDTOResponse getRequest(@PathVariable Long requestId,
-                                         @RequestHeader(X_SHARER_USER_ID) Long userId,
-                                         @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
-                                         @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
-        return client.getRequestById(requestId, userId, from, size);
-    }
-     */
+
 }
