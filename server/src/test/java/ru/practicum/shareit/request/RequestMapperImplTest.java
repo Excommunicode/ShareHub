@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RequestMapperImplTest {
 
-   private static final RequestMapper mapper = Mappers.getMapper(RequestMapper.class);
+    private static final RequestMapper mapper = Mappers.getMapper(RequestMapper.class);
 
 
     @Test

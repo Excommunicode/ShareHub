@@ -10,8 +10,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestMapperResponseImplTest {
-   private static final RequestMapperResponse mapper = Mappers.getMapper(RequestMapperResponse.class);
-//private static final UserMapper USER_MAPPER = Mappers.getMapper(UserMapper.class);
+    private static final RequestMapperResponse mapper = Mappers.getMapper(RequestMapperResponse.class);
+
+
     @Test
     void toDTO() {
         Request request = new Request();
@@ -19,7 +20,6 @@ class RequestMapperResponseImplTest {
         request.setDescription("Test Request Description");
         request.setCreated(LocalDateTime.now());
 
-//        RequestMapperResponseImpl mapper = new RequestMapperResponseImpl();
 
         RequestDTOResponse result = mapper.toDTO(request);
 
@@ -30,8 +30,7 @@ class RequestMapperResponseImplTest {
 
     @Test
     void toDTO_null() {
-//        RequestMapperResponseImpl mapper = new RequestMapperResponseImpl();
-        assertNull(mapper.toDTO(null));
+       assertNull(mapper.toDTO(null));
     }
 
 
@@ -42,7 +41,6 @@ class RequestMapperResponseImplTest {
         dtoResponse.setDescription("Test Request Description");
         dtoResponse.setCreated(LocalDateTime.now());
 
-//        RequestMapperResponseImpl mapper = new RequestMapperResponseImpl();
 
         Request result = mapper.toModel(dtoResponse);
 
@@ -53,7 +51,6 @@ class RequestMapperResponseImplTest {
 
     @Test
     void toModel_null() {
-//        RequestMapperResponseImpl mapper = new RequestMapperResponseImpl();
         assertNull(mapper.toModel(null));
     }
 
@@ -73,7 +70,6 @@ class RequestMapperResponseImplTest {
         requestList.add(request1);
         requestList.add(request2);
 
-//        RequestMapperResponseImpl mapper = new RequestMapperResponseImpl();
 
         List<RequestDTOResponse> result = mapper.toDTOList(requestList);
 
@@ -89,7 +85,6 @@ class RequestMapperResponseImplTest {
 
     @Test
     void toDTOList_null() {
-//        RequestMapperResponseImpl mapper = new RequestMapperResponseImpl();
         assertNull(mapper.toDTOList(null));
     }
 }
