@@ -1,11 +1,35 @@
-version: "3.8"
+version: '3.8'
 services:
-  postgres:
-    container_name: db
-    image: postgres
-    environment:
-      POSTGRES_DB: "shareit"
-      POSTGRES_USER: "Faruh"
-      POSTGRES_PASSWORD: "iamroot"
+  gateway:
+    build: ./gateway
+    image: gateway
+    container_name: gateway
     ports:
-      - "5432:5432"
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+      - SHAREIT_SERVER_URL=http://server:9090
+
+  server:
+    build: ./server
+    image: server
+    container_name: server
+    ports:
+      - "9090:9090"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_USER=Faruh
+      - SPRING_DATASOURCE_PASSWORD=iamroot
+
+  db:
+    image: postgres:16.0
+    container_name: db
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=shareit
+      - POSTGRES_USER=Faruh
+      - POSTGRES_PASSWORD=iamroot
