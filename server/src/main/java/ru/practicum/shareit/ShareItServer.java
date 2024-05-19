@@ -8,6 +8,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ShareItServer {
     public static void main(String[] args) {
         SpringApplication.run(ShareItServer.class, args);
-        System.err.println("Hello World!");
     }
 }

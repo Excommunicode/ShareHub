@@ -20,6 +20,7 @@ import static ru.practicum.shareit.utils.Marker.OnUpdate;
 @RequestMapping(path = "/items")
 public class ItemController {
     private final ItemClient client;
+    private final ItemValid itemValid;
 
     /**
      * Creates a new item and associates it with a specific user.
@@ -86,7 +87,8 @@ public class ItemController {
     public ResponseEntity<Object> searchByText(@RequestParam String text,
                                                @Positive @RequestParam(defaultValue = INITIAL_X) Integer from,
                                                @Positive @RequestParam(defaultValue = LIMIT) Integer size) {
-        return client.searchByText(text, from, size);
+
+        return itemValid.validText(text, from, size);
     }
 
     /**

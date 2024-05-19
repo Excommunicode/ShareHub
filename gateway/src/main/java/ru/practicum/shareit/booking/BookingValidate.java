@@ -1,9 +1,9 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.BadRequestException;
 
-@Component
+@Service
 public class BookingValidate {
 
     public void validDate(BookingDTO bookingDTO) {
